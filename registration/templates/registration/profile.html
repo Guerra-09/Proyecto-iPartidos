@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>My Profile</h2>
+<div class="d-flex">
+    <div class="me-4 col-md-8 pe-2">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" class="btn btn-warning" value="Update">
+        </form>
+
+    </div>
+    
+</div>
+{% endblock %}

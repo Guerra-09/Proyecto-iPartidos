@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2 class="text-center">Inicia sesion</h2>
+<div class="col-md-6 mx-auto">
+    <form method="post">
+        {% csrf_token %}
+        <div class='.container'>
+            <p>
+                <label>Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </p>
+            <p>
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </p>
+    
+            <div class="is-grouped">
+                <button type="submit" class="btn btn-dark">Iniciar sesion</button>
+            </div>
+        </div>
+</div>
+</form>
+</div>
+{% endblock %}
