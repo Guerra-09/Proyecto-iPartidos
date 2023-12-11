@@ -4,33 +4,25 @@
 
 <div>
     <h1> Quieres reservar una cancha para jugar? reserva una con nosotros! </h1>
-    <pre>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac lectus eget mauris sodales tristique. Quisque
-        quam libero, scelerisque nec dictum eu, fringilla sit amet mauris. Suspendisse potenti. In hac habitasse platea
-        dictumst. Suspendisse sollicitudin, dolor sit amet placerat gravida, enim mauris blandit tortor, nec auctor lectus
-        neque sed purus. Integer lectus nisl, convallis id lacus vel, accumsan consequat massa. Vestibulum a mauris ut dui
-        tincidunt convallis. Suspendisse commodo metus nulla, vel consectetur leo blandit quis. Duis efficitur nec neque vel
-        imperdiet. Integer pharetra in quam eget ullamcorper. Aenean a ipsum lacus.
-    
-        Donec nec diam nec dui consequat consectetur et et lorem. Quisque id orci dapibus, varius magna id, rutrum sapien.
-        Etiam nec lectus eu eros vestibulum dictum sed nec sapien. Suspendisse eget arcu purus. Sed nec dictum lorem. Nullam
-        eu placerat quam. Sed maximus blandit ex, at maximus dui egestas eget.
-    </pre>
+    <a href="#"> Ver canchas disponibles </a>
 
-    <h3> Algunas de nuestras canchas </h3>
+    <h3> Distintos clubes para escoger </h3>
     <br>
 
     <div class="card" style="width: 18rem;">
+
+
         {% load static %}
         <img src="{% static 'core/img/fieldstock.jpg' %}" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">Club las chamas</h5>
             <p class="card-text">
-                Recinto deportivo limpio y confiable
+                Abierto de 9 a 11 <br>
+                Pacifico norte con avenida francia
             </p>
 
             {% if request.user.is_authenticated %}
-                <a href="{% url 'canchas' %}" class="btn btn-primary">Reservar</a>
+                <a href="{% url 'canchas_list' %}" class="btn btn-primary">Reservar</a>
             {% else %}
                 <a href="{% url 'login' %}" class="btn btn-primary">Reservar</a>
             {% endif %}

@@ -1,14 +1,15 @@
 {% extends 'core/base.html' %}
+{% load static %} 
 
 {% block content %}
 <h2 class="text-center">Inicia sesion</h2>
 <div class="col-md-6 mx-auto">
     <form method="post">
         {% csrf_token %}
-        <div class='.container'>
+        <div class='container'>
             <p>
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" required>
+                <label for="id_username">Email</label>
+                <input type="email" name="username" id="username" class="form-control" required>
             </p>
             <p>
                 <label>Password</label>
@@ -19,7 +20,23 @@
                 <button type="submit" class="btn btn-dark">Iniciar sesion</button>
             </div>
         </div>
-</div>
-</form>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        </div>
+    </form>
 </div>
 {% endblock %}

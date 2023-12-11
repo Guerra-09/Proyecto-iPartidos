@@ -7,6 +7,6 @@ urlpatterns = [
     path('', views.home, name="home"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include(('registration.urls'))),
-    path('canchas/', include('canchas.urls')),
+    path('fields/', include('canchas.urls')),
     path('clubes/', include('clubes.urls')),
 ]

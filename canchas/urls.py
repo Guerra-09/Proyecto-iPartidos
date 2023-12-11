@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
-from canchas import views
+from canchas.views import FieldListView
 
 urlpatterns = [
-    path('see/', views.canchaScreen, name='canchas')
+    path('list/', FieldListView.as_view() , name='canchas_list')
 ]
