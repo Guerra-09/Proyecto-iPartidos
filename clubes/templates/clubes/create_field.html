@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+    <h1>Create Field</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <a href="{% url 'club_settings' %}">Back to list</a>
+        <button type='submit'> Crear </button>
+    </form>
+
+{% endblock %}

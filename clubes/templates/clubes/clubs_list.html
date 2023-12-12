@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    {% load static %}
+    
+    {% for club in clubs %}
+
+        <h1>{{ club.clubName }}</h1>
+        <p>Descripcion: {{ club.clubDescription }}</p>
+        <p>Direccion: {{ club.clubAddress }}</p>
+        <img src="{{ club.clubPhoto.url }}">
+        <br>
+        <a href="" class='clubPhoto'>
+            <button> Reservar una cancha </button>
+        </a>
+
+    {% endfor %}
+
+{% endblock %}

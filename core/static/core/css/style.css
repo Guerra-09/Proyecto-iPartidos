@@ -4,6 +4,11 @@
     margin-left: 25px;
 }
 
-body {
+body{
     background: #afaeae;
 }
+
+.clubPhoto{
+    max-width: 250px;
+}
+

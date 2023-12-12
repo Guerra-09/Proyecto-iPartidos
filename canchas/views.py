@@ -13,3 +13,4 @@ class FieldDetailView(DetailView):
     model = Field
     template_name = 'canchas/fields_detail.html'
     context_object_name = 'cancha'
+

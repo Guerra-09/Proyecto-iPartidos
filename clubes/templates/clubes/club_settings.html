@@ -3,13 +3,27 @@
 {% block content %}
     <h1>Update Club</h1>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p}}
 
         
         <input type="submit" value="Update" />
-
     </form>
+
+    <h1>Tus canchas</h1>
+
+        {% comment %} SHOW FIELDS {% endcomment %}
+
+        <h1>ESTA VISTA DEBERIA CARGAR LAS CANCHAS</h1>
+
+    {% for field in fields %}
+
+        <p>Nombre: {{ field.name }}</p>
+        <p>Precio: ${{ field.price }}</p>
+
+    {% endfor %}
+
+    <a href="{% url 'create_field' %}"> Agregar cancha </a>
 
 {% endblock %}

@@ -17,7 +17,7 @@ class Tenant(UsuarioProfile):
     fieldsNetWorth = models.FloatField(default=0.0)
     clubName = models.CharField(max_length=200, default='')
     clubDescription = models.CharField(max_length=200, default='')
-    clubPhoto = models.ImageField(upload_to='club_photos', default='', blank=True) 
+    clubPhoto = models.ImageField(upload_to='club_photos', null=True, blank=True) 
     clubAddress = models.CharField(max_length=200, default='')
 
 class Client(UsuarioProfile):
