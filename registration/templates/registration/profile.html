@@ -7,13 +7,8 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {{ request.user.role }}
-
-            {% if request.user.role == 'True'  %}
-                <p>Registrado como: Client </p>
-            {% else %}
-                <p>Registrado como: Tenant </p>
-            {% endif%}
+            <p>Role: {{ request.user.role }}</p>
+            <p>User: {{ request.user.username }}</p>
         </form>
 
     </div>

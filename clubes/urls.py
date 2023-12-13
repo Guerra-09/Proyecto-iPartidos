@@ -7,4 +7,5 @@ urlpatterns = [
     path('all/', ClubsListView.as_view(), name='all'),
     path('settings/', ClubUpdateView.as_view(), name='club_settings'),
     path('createField/',  FieldCreateView.as_view(), name='create_field'),
+    path('fieldDetail/', views.field_detail, name='field_detail')
 ]

@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+<body>
+    {% block content %}
+        {% for field in fields|slice:"0::-1" %}
+            <div class=''>
+
+                <div class="card" style="width: 80rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ field.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ field.price }}</h6>
+                        <p class="card-text">
+                        {% if field.isActive == True %}
+                            <p>Cancha activa</p>
+                        {% else %}
+                            <p>Cancha Inactiva</p>
+                        {% endif %}
+                        </p>
+                        <a href="{% url 'cancha_update' pk=field.id %}" class="card-link">Modificar</a>
+                    </div>
+                </div>
+
+                
+
+
+            </div>
+            <br>
+        {% endfor %}
+    {% endblock %}
+
+</body>
+</html>

@@ -6,16 +6,23 @@
     {% load static %}
     
     {% for club in clubs %}
-
-        <h1>{{ club.clubName }}</h1>
-        <p>Descripcion: {{ club.clubDescription }}</p>
-        <p>Direccion: {{ club.clubAddress }}</p>
-        <img src="{{ club.clubPhoto.url }}">
-        <br>
-        <a href="" class='clubPhoto'>
-            <button> Reservar una cancha </button>
-        </a>
-
+        {% if club.clubName or club.clubDescription or club.clubAddress %}
+            <h1>{{ club.clubName }}</h1>
+            {% if club.clubDescription %}
+                <p>Descripcion: {{ club.clubDescription }}</p>
+            {% endif %}
+            {% if club.clubAddress %}
+                <p>Direccion: {{ club.clubAddress }}</p>
+            {% endif %}
+            <p>Dueno: {{ club.tenant.username }}</p>
+            {% if club.tenant.clubPhoto %}
+                <img src="{{ club.clubPhoto.url }}">
+            {% else %}
+                <p>No tiene foto</p>
+            {% endif %}
+            <br>
+            <a href="{% url 'field_detail'%}">Ver club</a>
+        {% endif %}
     {% endfor %}
 
 {% endblock %}

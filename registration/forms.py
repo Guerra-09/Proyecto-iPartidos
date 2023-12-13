@@ -36,24 +36,25 @@ class CustomUserCreationForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if Tenant.objects.filter(email=email).exists():
+        if Tenant.objects.filter(email=email).exists() or Client.objects.filter(email=email).exists():
             raise forms.ValidationError('Este correo electrónico ya está en uso.')
         return email
     
     def save(self, commit=True):
-        user = super().save(commit=False)
-        user.username = self.cleaned_data['email']
         if self.cleaned_data.get('role') == True:
+            user = Tenant()
             user.role = 'tenant'
         else:
+            user = Client()
             user.role = 'client'
+        user.username = self.cleaned_data['email']
+        user.set_password(self.cleaned_data['password1'])
+        user.email = self.cleaned_data['email']
+        user.name = self.cleaned_data['name']
+        user.last_name = self.cleaned_data['last_name']
+        user.bornDate = self.cleaned_data['bornDate']
+        user.phoneNumber = self.cleaned_data['phoneNumber']
+
         if commit:
             user.save()
-        return user
-        
-        if commit:
-            user.save()
-            if user.role == 'tenant':
-                print("ES UN TENANT")
-                
         return user

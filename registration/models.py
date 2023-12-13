@@ -21,7 +21,7 @@ class Tenant(UsuarioProfile):
     clubAddress = models.CharField(max_length=200, default='')
 
 class Client(UsuarioProfile):
-    fieldsRented: models.ManyToManyField('FieldRentHistory')
+    fieldsRented = models.ManyToManyField('FieldRentHistory')
 
 class FieldRentHistory(models.Model):
     takenBy = models.ForeignKey(Client, on_delete=models.CASCADE)

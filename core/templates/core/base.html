@@ -39,6 +39,14 @@
                 <li class="nav-item">
                   <a class="nav-link" aria-current="page" href="{% url 'club_settings' %}"> Mi club </a>
                 </li> 
+
+                <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="{% url 'canchas_list' %}"> Mis canchas </a>
+                </li> 
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="#"> Mis reservas </a>
+              </li> 
             {% endif %}
 
               <li class="nav-item">

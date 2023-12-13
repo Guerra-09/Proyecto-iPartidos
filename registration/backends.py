@@ -12,6 +12,9 @@ class EmailBackend(ModelBackend):
 
         if user.check_password(password):
             print("Password is correct")  # Print statement for debugging
+            # Check if the user is a Tenant
+            if hasattr(user, 'tenant'):
+                print("Tenant found")  # Print statement for debugging
             return user
         else:
             print("Password is incorrect")  # Print statement for debugging
@@ -20,8 +23,12 @@ class EmailBackend(ModelBackend):
         UserModel = get_user_model()
         try:
             user = UserModel.objects.get(pk=user_id)
-            print("User found")  # Print statement for debugging
+            if user.role == 'tenant':
+                print("Tenant found")
+            else:
+                print("User found") 
             return user
+
         except UserModel.DoesNotExist:
             print("User does not exist")  # Print statement for debugging
             return None

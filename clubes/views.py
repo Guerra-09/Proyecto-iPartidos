@@ -6,6 +6,7 @@ from canchas.forms import FieldForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
 
 
 class ClubUpdateView(UpdateView):
@@ -28,11 +29,7 @@ class ClubUpdateView(UpdateView):
             return self.request.user.tenant
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
-        
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['fields'] = Field.objects.filter(tenant=self.object)
-        return context
+
 
 
 
@@ -41,10 +38,20 @@ class ClubsListView(ListView):
     model = Tenant
     template_name = 'clubes/clubs_list.html'
     context_object_name = 'clubs'
+
+
     
 
 class FieldCreateView(CreateView):
     form_class = FieldForm 
-    template_name = 'clubes/create_field.html'
+    template_name = 'canchas/create_field.html'
     success_url = reverse_lazy('all')
 
+    def form_valid(self, form):
+        print("User:", self.request.user)
+        print("Tenant:", self.request.user.tenant)
+        form.instance.tenant = self.request.user.tenant
+        return super().form_valid(form)
+
+def field_detail(request):
+    return render(request, 'clubes/club_clientDetailView.html')
