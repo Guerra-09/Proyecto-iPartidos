@@ -1,14 +1,18 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<h2>Bienvenido {{request.user.name}} </h2>
+<h2>Bienvenido(a) {{request.user.name}} {{request.user.last_name}} </h2>
 <div class="d-flex">
     <div class="me-4 col-md-8 pe-2">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             <p>Role: {{ request.user.role }}</p>
-            <p>User: {{ request.user.username }}</p>
+
+            {{ form.as_p }}
+            
+            <button type="submit" class="btn btn-primary">Guardar</button>
+
         </form>
 
     </div>

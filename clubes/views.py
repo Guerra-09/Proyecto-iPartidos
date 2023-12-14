@@ -1,18 +1,18 @@
 from django.shortcuts import render
-from django.views.generic import UpdateView, CreateView, ListView
+from django.views.generic import UpdateView, CreateView, ListView, DetailView
 from registration.models import Tenant
 from canchas.models import Field
-from canchas.forms import FieldForm
+from clubes.forms import ClubForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 
-
+#
 class ClubUpdateView(UpdateView):
     model = Tenant
     template_name = 'clubes/club_settings.html'
-    fields = ['clubName', 'clubDescription', 'clubPhoto', 'clubAddress']
+    form_class = ClubForm
     success_url = reverse_lazy('club_settings')
 
     @method_decorator(login_required)
@@ -30,28 +30,22 @@ class ClubUpdateView(UpdateView):
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
 
-
-
-
-
+#
 class ClubsListView(ListView):
     model = Tenant
     template_name = 'clubes/clubs_list.html'
     context_object_name = 'clubs'
 
-
-    
-
-class FieldCreateView(CreateView):
-    form_class = FieldForm 
-    template_name = 'canchas/create_field.html'
-    success_url = reverse_lazy('all')
-
-    def form_valid(self, form):
-        print("User:", self.request.user)
-        print("Tenant:", self.request.user.tenant)
-        form.instance.tenant = self.request.user.tenant
-        return super().form_valid(form)
-
+#
 def field_detail(request):
     return render(request, 'clubes/club_clientDetailView.html')
+
+class ClubClientDetailView(DetailView):
+    model = Tenant
+    template_name = 'clubes/club_clientDetailView.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['fields'] = Field.objects.filter(tenant=self.object)
+        context['club'] = self.object.tenant
+        return context

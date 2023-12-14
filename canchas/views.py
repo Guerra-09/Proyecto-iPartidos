@@ -5,6 +5,7 @@ from .forms import FieldForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.core.exceptions import MultipleObjectsReturned
+from copy import copy
 
 
 class FieldListView(ListView):
@@ -14,6 +15,18 @@ class FieldListView(ListView):
 
     def get_queryset(self):
         return Field.objects.filter(tenant=self.request.user.tenant)
+
+
+class FieldCreateView(CreateView):
+    form_class = FieldForm 
+    template_name = 'canchas/create_field.html'
+    success_url = reverse_lazy('all')
+
+    def form_valid(self, form):
+        print("User:", self.request.user)
+        print("Tenant:", self.request.user.tenant)
+        form.instance.tenant = self.request.user.tenant
+        return super().form_valid(form)
 
 
 class FieldUpdateView(LoginRequiredMixin, UpdateView):

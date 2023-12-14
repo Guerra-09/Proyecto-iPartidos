@@ -3,10 +3,50 @@
 {% block content %}
 
     <div class="container">
+
         <div class="row">
             <div class="col-md-12">
-            <h1>Vista del usuario para ver las canchas que el club tiene</h1>
-            <p>Falta poner en el url '< int:pk >' y crear un CustomListView </p>
+
+                <h1>{{ club.clubName }}</h1>
+
+
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h4>Numero de jugadores por lado</h4>
+                        <p>ChoiceField (por defecto todos)</p>
+                    </div>
+            
+                    <div>
+                        <h4>Tipo de cancha</h4>
+                        <p>ChoiceField (por defecto todos)</p>
+                    </div>
+            
+
+                </div>
+
+
+                {% for field in fields %}
+                    {% if field.isActive == True %}
+
+                    <div class="card" style="width: 80rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ field.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary">{{ field.price }}</h6>
+                            <p class="card-text">
+
+                            <p>Jugadores por lado: {{ field.playersPerSide }} </p>  
+
+                            </p>
+                            <a href="{% url 'reservation' field.id %}"> Reservar </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                
+                {% empty %}
+                    <p>No hay canchas disponibles.</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 

@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'registration', 
     'core',
     'canchas',
-    'clubes'
+    'clubes',
+    'reservation'
 ]
 
 MIDDLEWARE = [

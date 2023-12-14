@@ -10,6 +10,7 @@ urlpatterns = [
     path('accounts/', include(('registration.urls'))),
     path('fields/', include('canchas.urls')),
     path('clubes/', include('clubes.urls')),
+    path('reservas/', include('reservation.urls')),
 ]
 
 

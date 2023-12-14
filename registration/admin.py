@@ -1,10 +1,12 @@
 from django.contrib import admin
 from .models import Tenant, Client
 
-# Register your models here.
-admin.site.register(Tenant)
 
-admin.site.register(Client)
+class TenantAdmin(admin.ModelAdmin):
+    ...
 
-# USER = guerra123  
-# psswd = 123
+class ClientAdmin(admin.ModelAdmin):
+    ...
+
+admin.site.register(Tenant, TenantAdmin)
+admin.site.register(Client, ClientAdmin)

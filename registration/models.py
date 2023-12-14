@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import timedelta
+from datetime import datetime, date, time, timedelta
 
 class UsuarioProfile(AbstractUser):
     name = models.CharField(max_length=200, default='',) 
@@ -19,17 +21,34 @@ class Tenant(UsuarioProfile):
     clubDescription = models.CharField(max_length=200, default='')
     clubPhoto = models.ImageField(upload_to='club_photos', null=True, blank=True) 
     clubAddress = models.CharField(max_length=200, default='')
+    clubApertureTime = models.TimeField('Hora de apertura', null=True, blank=True,)
+    clubClosureTime = models.TimeField('Hora de cierre', null=True, blank=True,)
+
+    class Meta:
+        verbose_name = 'Tenant'
+        verbose_name_plural = 'Tenants'
+
+    def get_available_times(self):
+        print(f"Aperture time: {self.clubApertureTime}")
+        print(f"Closure time: {self.clubClosureTime}")
+
+        times = []
+        current_time = self.clubApertureTime
+        while current_time != self.clubClosureTime:
+            times.append(current_time)
+            current_time = (datetime.combine(date.today(), current_time) + timedelta(hours=1)).time()
+            if current_time > time(23, 59):  # Si la hora actual supera la medianoche, resetéala a 00:00:00
+                current_time = time()
+        print(times)
+        return times
 
 class Client(UsuarioProfile):
-    fieldsRented = models.ManyToManyField('FieldRentHistory')
+    fieldsRented = models.ManyToManyField('FieldRentHistory', related_name='clients')
+
+    class Meta:
+        verbose_name = 'Client'
+        verbose_name_plural = 'Clients'
 
 class FieldRentHistory(models.Model):
     takenBy = models.ForeignKey(Client, on_delete=models.CASCADE)
-    reservation = models.OneToOneField('Reservation', on_delete=models.CASCADE)
-
-class Reservation(models.Model):
-    field = models.ForeignKey('canchas.Field', on_delete=models.CASCADE)
-    dateAtReservation = models.DateField()
-    dateToReservate = models.DateField()
-    price = models.FloatField()
-
+    #reservation = models.OneToOneField('Reservation', on_delete=models.CASCADE)

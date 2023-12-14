@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+    <h1> Nombre de cancha seleccionada </h1>
+    <p>Cancha de 5,      $15.000,     Cancha de pasto sintetico</p>
+
+    <h4>Escoger fecha</h4>
+    <p>Picker de fecha (dia)</p>
+
+    <p>Aqui salen los horarios disponibles para ese dia:</p>
+
+    {% for time in available_times %}
+        <div class='card'>
+            <p>{{ time|time:"H:i" }}</p>
+            <a href="{% url 'payment' %}">Reservar horario</a>
+        </div>
+    {% endfor %}
+
+
+{% endblock %}

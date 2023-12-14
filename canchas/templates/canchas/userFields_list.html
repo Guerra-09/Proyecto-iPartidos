@@ -2,30 +2,50 @@
 
 <body>
     {% block content %}
-        {% for field in fields|slice:"0::-1" %}
-            <div class=''>
+        <div style="padding-bottom: 10px;">
+            <a href="{% url 'create_field' %}"> 
+                <button type="button" class="btn btn-primary">Agregar cancha</button>
+            </a>
+        </div>
 
-                <div class="card" style="width: 80rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ field.name }}</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ field.price }}</h6>
-                        <p class="card-text">
-                        {% if field.isActive == True %}
-                            <p>Cancha activa</p>
-                        {% else %}
-                            <p>Cancha Inactiva</p>
-                        {% endif %}
-                        </p>
-                        <a href="{% url 'cancha_update' pk=field.id %}" class="card-link">Modificar</a>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in fields|slice:"0::-1" %}
+                <div class=''>
+
+                    <div class="card" style="width: 80rem;">
+                        <div class="card-body d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">{{ field.name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">{{ field.price }}</h6>
+                                <p class="card-text">
+                                <p> {{ field.groundType }}</p>
+                        
+                                {% if field.isActive == True %}
+                                    <p>Cancha activa</p>
+                                {% else %}
+                                    <p>Cancha Inactiva</p>
+                                {% endif %} 
+                                        
+                                    <p>Jugadores por lado: {{ field.playersPerSide }} </p>   
+                                </p>
+                                <a href="{% url 'cancha_update' pk=field.id %}" class="card-link">Modificar</a>
+                            </div>
+                        
+                            {% if field.fieldPhoto %}
+                                <img src="{{ field.fieldPhoto.url }}" width="300" height="300">
+                            {% else %}
+                                {% load static %}
+                                <img src="{% static 'core/img/noPhoto.jpg' %}" width="300" height="300">
+                            {% endif %}
+                        </div>
                     </div>
+
                 </div>
-
-                
-
-
-            </div>
-            <br>
-        {% endfor %}
+                <br>
+            {% endfor %}
+        </form>
     {% endblock %}
 
 </body>

@@ -21,7 +21,9 @@
                 <p>No tiene foto</p>
             {% endif %}
             <br>
-            <a href="{% url 'field_detail'%}">Ver club</a>
+            <a href="{% url 'field_detail' club.id %}">
+                <button type="button" class="btn btn-primary btn-sm">Reservar</button>
+            </a>
         {% endif %}
     {% endfor %}
 
