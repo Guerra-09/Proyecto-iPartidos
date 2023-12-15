@@ -30,7 +30,7 @@ class ClubUpdateView(UpdateView):
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
 
-#
+
 class ClubsListView(ListView):
     model = Tenant
     template_name = 'clubes/clubs_list.html'

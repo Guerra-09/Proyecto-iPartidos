@@ -9,6 +9,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 import re
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 # User Register Form
@@ -98,7 +100,11 @@ class CustomUserChangeForm(UserChangeForm):
         phoneNumber = self.cleaned_data['phoneNumber']
         if not re.match(r'^9\d{8}$', phoneNumber):
             raise ValidationError('El número debe contener 9 caracteres, incluyendo el 9 al principio.')
-        
+
+        user = self.instance
+        if user.phoneNumber == phoneNumber:
+            return phoneNumber
+
         if get_user_model().objects.filter(phoneNumber=phoneNumber).exists():
             raise ValidationError('El número ya está en uso.')
 
@@ -114,7 +120,6 @@ class CustomUserChangeForm(UserChangeForm):
 
 # Login Auhentication Form
 class CustomAuthenticationForm(AuthenticationForm):
-
     username = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     def clean(self):
@@ -132,3 +137,22 @@ class CustomAuthenticationForm(AuthenticationForm):
                 params={'username': self.username_field.verbose_name},
             )
         return cleaned_data
+    
+
+
+class PasswordRecoveryForm(forms.Form):
+    email = forms.EmailField(label='Correo electrónico')
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+            print("El correo electrónico ingresado existe.")
+        except User.DoesNotExist:
+            print("El correo electrónico ingresado no existe.")
+            raise forms.ValidationError('El correo electrónico ingresado no existe.')
+
+        return email
+
