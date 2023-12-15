@@ -6,16 +6,25 @@
     <p>Cancha de 5,      $15.000,     Cancha de pasto sintetico</p>
 
     <h4>Escoger fecha</h4>
-    <p>Picker de fecha (dia)</p>
-
-    <p>Aqui salen los horarios disponibles para ese dia:</p>
+    <form method="post">
+        {% csrf_token %}
+        <label for="date">Fecha:</label>
+        <input type="date" name="date" value="{{ selected_date|date:"Y-m-d" }}">
+        <input type="hidden" name="field_id" value="{{ field.id }}">
+        <input type="submit" value="Seleccionar fecha">
+    </form>
 
     {% for time in available_times %}
         <div class='card'>
             <p>{{ time|time:"H:i" }}</p>
-            <a href="{% url 'payment' %}">Reservar horario</a>
+            <form method="post" action="{% url 'payment' %}">
+                {% csrf_token %}
+                <input type="hidden" name="date" value="{{ selected_date|date:"Y-m-d" }}">
+                <input type="hidden" name="time" value="{{ time|time:"H:i" }}">
+                <input type="hidden" name="field_id" value="{{ field.id }}">
+                <input type="submit" value="Reservar horario">
+            </form>
         </div>
     {% endfor %}
-
 
 {% endblock %}

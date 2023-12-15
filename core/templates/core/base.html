@@ -33,6 +33,10 @@
             <a class="nav-link" href="{% url 'all' %}"> Clubes </a>
           </li>
 
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#"> Ayuda </a>
+          </li>
+
           {% if request.user.is_authenticated %}
 
             {% if request.user.role == 'tenant' %}
@@ -58,6 +62,7 @@
             </li>
 
           {% else %}
+
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="{% url 'login' %}"> Inicia sesion </a>
             </li>

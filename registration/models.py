@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import timedelta
 from datetime import datetime, date, time, timedelta
+from django.apps import apps
+from reservation.models import Reservation
+
 
 class UsuarioProfile(AbstractUser):
     name = models.CharField(max_length=200, default='',) 
@@ -39,8 +42,25 @@ class Tenant(UsuarioProfile):
             current_time = (datetime.combine(date.today(), current_time) + timedelta(hours=1)).time()
             if current_time > time(23, 59):  # Si la hora actual supera la medianoche, resetéala a 00:00:00
                 current_time = time()
-        print(times)
+        #
         return times
+    
+    def get_available_times_for_date(self, selected_date):
+        if isinstance(selected_date, str):
+            selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
+
+        available_times = []
+
+        Reservation = apps.get_model('reservation', 'Reservation')
+        reservations = Reservation.objects.filter(dateAtReservation=selected_date)
+
+        reserved_times = [reservation.time for reservation in reservations]
+
+        all_times = self.get_available_times()
+
+        available_times = [datetime.time(t.hour, t.minute) for t in available_times]
+
+        return available_times
 
 class Client(UsuarioProfile):
     fieldsRented = models.ManyToManyField('FieldRentHistory', related_name='clients')
@@ -51,4 +71,4 @@ class Client(UsuarioProfile):
 
 class FieldRentHistory(models.Model):
     takenBy = models.ForeignKey(Client, on_delete=models.CASCADE)
-    #reservation = models.OneToOneField('Reservation', on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)

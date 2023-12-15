@@ -2,8 +2,17 @@
 
 {% block content %}
 
-    <a href="{% url 'payment_success' %}"> PAGAR </a>
+    <h2>Resumen de la reserva</h2>
+    <p>Fecha: {{ date }}</p>
+    <p>Hora: {{ time }}</p>
+    <p>Nombre de la cancha: {{ field.name }}</p>
+    <p>Jugadores por lado: {{ players }}</p>
+    <p>Precio: {{ price }}</p>
 
-    
+
+    <div>
+        <a href="#" onclick="window.history.back();">volver</a>
+    </div>
+    <a href="{% url 'payment_success' %}"> PAGAR </a>
 
 {% endblock %}
