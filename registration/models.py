@@ -19,6 +19,7 @@ class UsuarioProfile(AbstractUser):
         return f'{self.name} {self.last_name}'
     
 class Tenant(UsuarioProfile):
+    
     fieldsNetWorth = models.FloatField(default=0.0)
     clubName = models.CharField(max_length=200, default='')
     clubDescription = models.CharField(max_length=200, default='')

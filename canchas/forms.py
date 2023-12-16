@@ -1,7 +1,7 @@
 from django import forms
 from .models import Field
 
-GROUND_CHOICES = (('Pasto sintético', 'Pasto sintético'), ('Pasto real', 'Pasto real'), ('Cemento', 'Cemento'))
+GROUND_CHOICES = (('Pasto sintético', 'Pasto sintético'), ('Pasto real', 'Pasto real'), ('Cemento', 'Cemento'), ('Arcilla', 'Arcilla'))
 
 class FieldForm(forms.ModelForm):
 

@@ -6,9 +6,9 @@ from clubes.forms import ClubForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
-#
+#   
 class ClubUpdateView(UpdateView):
     model = Tenant
     template_name = 'clubes/club_settings.html'
@@ -30,22 +30,38 @@ class ClubUpdateView(UpdateView):
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
 
-
+#   
 class ClubsListView(ListView):
     model = Tenant
     template_name = 'clubes/clubs_list.html'
     context_object_name = 'clubs'
 
-#
+#   
 def field_detail(request):
     return render(request, 'clubes/club_clientDetailView.html')
 
+#   
 class ClubClientDetailView(DetailView):
     model = Tenant
     template_name = 'clubes/club_clientDetailView.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['fields'] = Field.objects.filter(tenant=self.object)
+
+        players_per_side = self.request.GET.get('players_per_side')
+        ground_type = self.request.GET.get('ground_type')
+
+        filters = Q(tenant=self.object)
+        if players_per_side:
+            filters &= Q(playersPerSide=players_per_side)
+        if ground_type:
+            filters &= Q(groundType=ground_type)
+
+        context['fields'] = Field.objects.filter(filters)
         context['club'] = self.object.tenant
+
+        context['GROUND_CHOICES'] = Field.GROUND_CHOICES
+        
+
         return context
+    

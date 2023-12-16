@@ -11,15 +11,27 @@
 
 
                 <div style="display: flex; justify-content: space-between;">
-                    <div>
-                        <h4>Numero de jugadores por lado</h4>
-                        <p>ChoiceField (por defecto todos)</p>
-                    </div>
-            
-                    <div>
-                        <h4>Tipo de cancha</h4>
-                        <p>ChoiceField (por defecto todos)</p>
-                    </div>
+                    <form method="get">
+                        <div>
+                            <h4>Numero de jugadores por lado</h4>
+                            <select name="players_per_side" onchange="this.form.submit()">
+                                <option value="">Todos</option>
+                                {% for i in "123456789"|make_list %}
+                                    <option value="{{ i }}" {% if request.GET.players_per_side == i %}selected{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <div>
+                            <h4>Tipo de cancha</h4>
+                            <select name="ground_type" onchange="this.form.submit()">
+                                <option value="">Todos</option>
+                                {% for choice in GROUND_CHOICES %}
+                                    <option value="{{ choice.0 }}" {% if request.GET.ground_type == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
             
 
                 </div>
@@ -35,6 +47,8 @@
                             <p class="card-text">
 
                             <p>Jugadores por lado: {{ field.playersPerSide }} </p>  
+
+                            <p>Tipo de cancha: {{ field.groundType }}</p>
 
                             </p>
                             <a href="{% url 'reservation' field.id %}"> Reservar </a>

@@ -22,6 +22,7 @@ from django.urls import reverse
 from decimal import Decimal, ROUND_DOWN
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 
@@ -97,8 +98,12 @@ def password_recovery(request):
                 )
 
                 return render(request, 'registration/password_sent.html')
+            else:
 
+                messages.error(request, 'El correo electrónico no existe en nuestra base de datos.')
+                return render(request, 'registration/password_recovery.html', {'form': form})
 
+        
 
     else:
         form = PasswordResetForm()
