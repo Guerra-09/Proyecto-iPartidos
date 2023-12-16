@@ -58,7 +58,10 @@
               </li> 
 
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{% url 'logout' %}"> Cerrar sesion </a>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <input type="submit" value="Logout">
+              </form>
             </li>
 
           {% else %}

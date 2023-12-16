@@ -80,9 +80,8 @@ def password_recovery(request):
 
                 print("usuario con nueva contrasena")
 
-                message = 'Tu nueva contraseña es: ' + new_password
-                email = 'djangoa353@gmail.com'
-                name = 'pepe'
+                message = f'Hola, esta es tu nueva clave provisioria: {new_password} \nAsegurate de cambiarla desde Mi perfil.' 
+                email = request.POST.get('email')
 
                 send_mail(
                     'Contact form', #title

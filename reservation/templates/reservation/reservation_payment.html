@@ -13,6 +13,9 @@
     <div>
         <a href="#" onclick="window.history.back();">volver</a>
     </div>
-    <a href="{% url 'payment_success' %}"> PAGAR </a>
+    <form method="post" action="{% url 'create_reservation' %}">
+        {% csrf_token %}
+        <input type="submit" value="PAGAR">
+    </form>
 
 {% endblock %}

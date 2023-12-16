@@ -17,3 +17,22 @@ body{
     display: flex;
     justify-content: space-between;
 }
+
+.time-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.time-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.time-card button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #333;
+}

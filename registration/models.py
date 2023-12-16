@@ -32,9 +32,7 @@ class Tenant(UsuarioProfile):
         verbose_name_plural = 'Tenants'
 
     def get_available_times(self):
-        print(f"Aperture time: {self.clubApertureTime}")
-        print(f"Closure time: {self.clubClosureTime}")
-
+        
         times = []
         current_time = self.clubApertureTime
         while current_time != self.clubClosureTime:
@@ -49,16 +47,14 @@ class Tenant(UsuarioProfile):
         if isinstance(selected_date, str):
             selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
 
-        available_times = []
-
         Reservation = apps.get_model('reservation', 'Reservation')
-        reservations = Reservation.objects.filter(dateAtReservation=selected_date)
+        reservations = Reservation.objects.filter(dateToReservate=selected_date)
 
-        reserved_times = [reservation.time for reservation in reservations]
+        reserved_times = [reservation.dateToReservate.time() for reservation in reservations]
 
         all_times = self.get_available_times()
 
-        available_times = [datetime.time(t.hour, t.minute) for t in available_times]
+        available_times = [t for t in all_times if t not in reserved_times]
 
         return available_times
 
