@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from canchas.models import Field
 from .models import Reservation
+from registration.models import ReservationHistory 
 from registration.models import Client
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from registration.models import FieldRentHistory
 from django.http import HttpResponseRedirect
 from datetime import datetime, date, time
-import os
+
 
 def index(request, field_id):
     field = Field.objects.get(id=field_id)  
@@ -33,7 +34,7 @@ def index(request, field_id):
 
 
 
-    reservations = Reservation.objects.filter(field=field, dateToReservate__date=selected_date)
+    reservations = ReservationHistory.objects.filter(field=field, dateToReservate__date=selected_date, status='pending').exclude(status='cancelled')
     reserved_times = reservations.values_list('dateToReservate__time', flat=True)
     reserved_times = [t.strftime("%H:%M") for t in reserved_times]
 
@@ -43,8 +44,11 @@ def index(request, field_id):
     available_times = [t.strftime('%H:%M') for t in available_times]
     available_times = [t for t in available_times if t not in reserved_times]
 
-    return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
+    print(f"Available times: {available_times}")
+    print(f"Reserved times: {reserved_times}")
 
+
+    return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
 
 def payment(request):
     if request.method == 'POST' or request.session.get('field_id'):
@@ -77,7 +81,6 @@ def payment(request):
     else:
         return render(request, 'reservation/reservation_payment.html')
 
-
 def create_reservation(request):
     if request.method == 'POST':
         field_id = request.session.get('field_id')
@@ -96,7 +99,7 @@ def create_reservation(request):
 
             date_to_reservate = timezone.make_aware(datetime.combine(date, time))
 
-            reservations = Reservation.objects.filter(field=field, dateToReservate__date=date)
+            reservations = Reservation.objects.filter(field=field, dateToReservate__date=date, status__in=['confirmed', 'completed'])
 
             available_times = field.tenant.get_available_times_for_date(date)
             available_times = [t for t in available_times if t not in [r.dateToReservate.time() for r in reservations]]
@@ -112,6 +115,15 @@ def create_reservation(request):
                 status='pending' 
             )
 
+            ReservationHistory.objects.create(
+            field=reservation.field,
+            dateAtReservation=reservation.dateAtReservation,
+            dateToReservate=reservation.dateToReservate,
+            price=reservation.price,
+            status=reservation.status,
+            client=request.user.client  # Assuming the User model has a 'client' field
+            )
+
             field_rent_history = FieldRentHistory.objects.create(takenBy=client, reservation=reservation)
 
             return redirect('payment_success')
@@ -121,8 +133,6 @@ def create_reservation(request):
 
     else:
         return redirect('payment')
-
-
 
 def payment_success(request):
     return render(request, 'reservation/reservation_payment_success.html')

@@ -15,5 +15,10 @@ class Field(models.Model):
     
 
     def __str__(self):
-        return f'{self.name} {self.isActive}'
+        
+        if self.isActive == True:
+            return f'{self.tenant.clubName} - {self.name} - Activa'
+        else:
+            return f'{self.tenant.clubName} - {self.name} - Inactiva'
+
 

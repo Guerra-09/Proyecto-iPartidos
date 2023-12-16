@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>mis reservas</h1>
+                {% for reservation in reservation_history %}
+                    <div>
+                        {% if reservation.status == 'cancelled' %}
+                            <h2 style="color: red;">Reserva #{{ reservation.id }}</h2>
+                        {% else %}
+                            <h2 style="color: green;">Reserva #{{ reservation.id }}</h2>
+                        {% endif %}
+
+                        <p>Fecha: {{ reservation.dateToReservate }}</p>
+                        <p>Campo: {{ reservation.field.name }}</p>
+                        <p>Estado: {{ reservation.status }}</p>
+                        <form method="post" action="{% url 'edit_reservation' reservation.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Cambiar fecha y/o hora</button>
+                        </form>
+                        <form method="post" action="{% url 'cancel_reservation' reservation.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Cancelar reserva</button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <p>No has realizado ninguna reserva.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

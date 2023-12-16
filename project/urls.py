@@ -11,6 +11,7 @@ urlpatterns = [
     path('fields/', include('canchas.urls')),
     path('clubes/', include('clubes.urls')),
     path('reservas/', include('reservation.urls')),
+    path('help/', views.help, name="help"),
 ]
 
 

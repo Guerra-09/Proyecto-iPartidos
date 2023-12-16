@@ -47,8 +47,8 @@ class Tenant(UsuarioProfile):
         if isinstance(selected_date, str):
             selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
 
-        Reservation = apps.get_model('reservation', 'Reservation')
-        reservations = Reservation.objects.filter(dateToReservate=selected_date)
+        ReservationHistory = apps.get_model('registration', 'ReservationHistory')
+        reservations = ReservationHistory.objects.filter(dateToReservate__date=selected_date, field__tenant=self).exclude(status='cancelled')
 
         reserved_times = [reservation.dateToReservate.time() for reservation in reservations]
 
@@ -60,11 +60,26 @@ class Tenant(UsuarioProfile):
 
 class Client(UsuarioProfile):
     fieldsRented = models.ManyToManyField('FieldRentHistory', related_name='clients')
+    reservationHistory = models.ManyToManyField('ReservationHistory', related_name='clients')
 
     class Meta:
         verbose_name = 'Client'
         verbose_name_plural = 'Clients'
 
+STATUS_CHOICES = [
+    ('confirmed', 'Confirmed'),
+    ('completed', 'Completed'),
+]
+
 class FieldRentHistory(models.Model):
     takenBy = models.ForeignKey(Client, on_delete=models.CASCADE)
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+
+
+class ReservationHistory(models.Model):
+    field = models.ForeignKey('canchas.Field', on_delete=models.CASCADE)
+    dateAtReservation = models.DateTimeField()
+    dateToReservate = models.DateTimeField()
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)

@@ -7,5 +7,9 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('profile/', ProfileUpdateView.as_view(), name='profile'),
-    path('password_recovery/', views.password_recovery, name='password_recovery')
+    path('password_recovery/', views.password_recovery, name='password_recovery'),
+    path('change_password/', views.change_password, name='change_password'),
+    path('user_reserves/<int:pk>/', views.user_reserves, name='user_reserves'),
+    path('edit_reservation/<int:reservation_id>/', views.edit_reservation, name='edit_reservation'),
+    path('cancel_reservation/<int:reservation_id>/', views.cancel_reservation, name='cancel_reservation'),
 ]
