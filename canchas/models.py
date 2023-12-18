@@ -13,8 +13,8 @@ class Field(models.Model):
     
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, default='', null=True, blank=True)
-    description = models.CharField(default='not defined', choices=GROUND_CHOICES, max_length=100, null=True, blank=True)
-    groundType = models.CharField(max_length=100, default='', null=False, blank=True)
+    description = models.CharField(default='not defined', max_length=100, null=True, blank=True)
+    groundType = models.CharField(max_length=100, default='Pasto sintético', choices=GROUND_CHOICES, null=False, blank=True)
     fieldPhoto = models.ImageField(upload_to='field_photos', null=True, blank=True) 
     price = models.IntegerField()
     isActive = models.BooleanField(default=True)

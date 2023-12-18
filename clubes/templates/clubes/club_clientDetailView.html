@@ -7,11 +7,11 @@
         <div class="row">
             <div class="col-md-12">
 
-                <h1>{{ club.clubName }}</h1>
+                <h1 class="display-4" style="margin-top: 30px;" >{{ club.clubName }}</h1>
 
 
-                <div style="display: flex; justify-content: space-between;">
-                    <form method="get">
+                <div style="margin-top: 10px; margin-bottom: 30px;">
+                    <form method="get" style="display: flex; justify-content: space-between;">
                         <div>
                             <h4>Numero de jugadores por lado</h4>
                             <select name="players_per_side" onchange="this.form.submit()">
@@ -32,37 +32,49 @@
                             </select>
                         </div>
                     </form>
-            
-
                 </div>
 
 
-                {% for field in fields %}
-                    {% if field.isActive == True %}
-
-                    <div class="card" style="width: 80rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ field.name }}</h5>
-                            <h6 class="card-subtitle mb-2 text-body-secondary">{{ field.price }}</h6>
-                            <p class="card-text">
-
-                            <p>Jugadores por lado: {{ field.playersPerSide }} </p>  
-
-                            <p>Tipo de cancha: {{ field.groundType }}</p>
-
-                            </p>
-                            <a href="{% url 'reservation' field.id %}"> Reservar </a>
+                {% csrf_token %}
+    
+            {% for field in fields %}
+                <div class='container'>
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body d-flex flex-column flex-md-row justify-content-between" style="flex-direction: column; justify-content: flex-start;">
+                            <div style="text-align: left;">
+                                <h5 class="card-title">Nombre: {{ field.name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">Precio: ${{ field.price }}</h6>
+                        
+                                <p>Descripcion: {{ field.description }}</p>
+                        
+                                <p>Tipo de suelo: {{ field.groundType }}</p>
+                        
+                                <p>Jugadores por lado: {{ field.playersPerSide }} </p>   
+                                <a href="{% url 'reservation' field.id %}" class="card-link d-md-inline d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary" style="margin-top: 10px;">Reservar</button>
+                                </a>
+                            </div>
+                        
+                            {% if field.fieldPhoto %}
+                                <img src="{{ field.fieldPhoto.url }}" class="img-fluid rounded" style="max-width: 300px; max-height: 200px;">
+                            {% else %}
+                                {% load static %}
+                                <img src="{% static 'core/img/noPhoto.jpg' %}" class="img-fluid rounded" style="max-width: 300px; max-height: 200px;">
+                            {% endif %}
                         </div>
-                        <p>Falta poner la foto</p>
                     </div>
-                    {% endif %}
-                    
-                
-                {% empty %}
-                    <p>No hay canchas disponibles.</p>
-                {% endfor %}
+                </div>
+          
+
+            {% empty %}
+
+            <p>No hay canchas disponibles :( </p>
+
+            {% endfor %}
             </div>
         </div>
     </div>
+
+    {% include 'core/footer.html' %}
 
 {% endblock %}

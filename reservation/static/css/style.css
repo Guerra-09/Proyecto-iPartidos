@@ -1,0 +1,31 @@
+.container {
+    background: #f5f5f7;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    margin: 30px auto;
+    max-width: 300px;
+    overflow: hidden;
+}
+
+.input {
+    margin: 30px;
+    position: relative;
+}
+
+input {
+    background: #fff;
+    border: none;
+    border-radius: 3px;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.3), 1px 1px 0 rgba(0, 0, 0, 0.1);
+    margin: 0 0 4px;
+    padding: 6px 10px 4px;
+    width: 100%;
+}
+
+input.form-submit {
+    bottom: 0;
+    box-shadow: none;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+}

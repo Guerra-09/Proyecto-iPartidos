@@ -2,37 +2,49 @@
 
 {% block content %}
 
-<div>
-    <h1> Quieres reservar una cancha para jugar? reserva una con nosotros! </h1>
-    <a href="#"> Ver canchas disponibles </a>
+{% load static %}
+<div style="margin-bottom: 50px;">
+    
+    <div style="background: url({% static 'core/img/soccer-open-field.jpg' %}) no-repeat center center; background-size: cover; text-align: center; padding: 20px;">
+        <h1 class='home-title'> Quieres reservar una cancha para jugar? reserva una con nosotros! </h1>
+    
+        <h3 class='home-title2'> Distintos clubes para escoger </h3>
+        
+        <br>
 
-    <h3> Distintos clubes para escoger </h3>
-    <br>
-
-    <div class="card" style="width: 18rem;">
-
-
-        {% load static %}
-        <img src="{% static 'core/img/fieldstock.jpg' %}" class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title">Club las chamas</h5>
-            <p class="card-text">
-                Abierto de 9 a 11 <br>
-                Pacifico norte con avenida francia
-            </p>
-
-            {% if request.user.is_authenticated %}
-                <a href="{% url 'canchas_list' %}" class="btn btn-primary">Reservar</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn btn-primary">Reservar</a>
-            {% endif %}
-          
-
-
-
-        </div>
+        <a href="{% url 'all' %}" class='home-reference'> Ver clubes disponibles </a>
     </div>
 
 
 </div>
+
+<h1 style="color: #163E56; text-align: center;" >Ultimos clubes registrados en iPartidos</h1>
+
+<div class='container d-flex justify-content-center align-items-center'>
+
+    {% for club in clubs %}
+    <div class="card" style="width: 18rem; margin-right: 20px;">
+        
+        {% if club.clubPhoto %}
+            <img src="{{ club.clubPhoto.url }}" class="card-img-top" alt="...">
+        {% else %}
+            <img src="{% static 'core/img/noPhoto.jpg' %}" class="card-img-top" alt="...">
+        {% endif %}
+     
+        <div class="card-body">
+            <h5 class="card-title">{{ club.clubName }}</h5>
+            <div class="card-text">
+                <p>Abierto de {{ club.clubApertureTime }} a {{ club.clubClosureTime }}</p>
+                <p>{{ club.clubAddress }}</p>
+            </div>
+            <a href="{% url 'field_detail' pk=club.id %}" class="btn btn-primary btn-block">Reservar</a>
+        </div>
+    </div>
+    {% endfor %}    
+
+</div style="margin-bottom: 50px;">
+
+{% include 'core/footer.html'%}
+
 {% endblock %}
+

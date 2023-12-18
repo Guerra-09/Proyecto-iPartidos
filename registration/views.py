@@ -66,7 +66,6 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
     
-
 def password_recovery(request):
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
@@ -96,7 +95,7 @@ def password_recovery(request):
                     [email],
                     fail_silently=False,
                 )
-
+                
                 return render(request, 'registration/password_sent.html')
             else:
 
@@ -154,7 +153,6 @@ def edit_reservation(request, reservation_id):
         # ...
         return redirect('user_reserves', pk=request.user.pk)
     
-
 @login_required
 def cancel_reservation(request, reservation_id):
     reservation = get_object_or_404(ReservationHistory, id=reservation_id)

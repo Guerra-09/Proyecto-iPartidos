@@ -1,31 +1,36 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<h2>Bienvenido(a) {{request.user.name}} {{request.user.last_name}} </h2>
-<div class="d-flex">
-    <div class="me-4 col-md-8 pe-2">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            {{ form.as_p }}
+    <div class="container-sm">
+        <h2 class="display-4">Bienvenido(a) {{request.user.name}} {{request.user.last_name}} </h2>
 
-            <a href="{% url 'change_password' %}">Cambiar contrasena</a>
+        {% if request.user.role == 'client' %}
+            <p class="fs-5">Cuenta personal</p>
+        {% elif request.user.role == 'tenant' %}
+            <p class="fs-5">Cuenta de empresa</p>
+        {% else %}
+            <p class="fs-5">Cuenta admin</p>
+        {% endif %}
 
-            <button type="submit" class="btn btn-primary">Guardar</button>
+        <div class="d-flex">
+            <div class="me-4 col-md-8 pe-2">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {{ form.as_p }}
 
-            {% if request.user.role == 'client' %}
-                <p>Cuenta personal</p>
-            {% elif request.user.role == 'tenant' %}
-                <p>Cuenta de empresa</p>
-            {% else %}
-                <p>Cuenta admin</p>
-            {% endif %}
+                    <button style="margin-right: 10px;" type="submit" class="btn btn-primary">Guardar</button>
 
+                    <a class="btn btn-primary" href="{% url 'change_password' %}">Cambiar contrasena</a>
 
+                    {% comment %} <a class="btn btn-danger" href="#">Eliminar cuenta</a> {% endcomment %}
 
-        </form>
-
+                    
+                    
+                </form>
+            </div>  
+        </div>
     </div>
-    
-</div>
+
+    {% include 'core/footer.html' %}
 {% endblock %}

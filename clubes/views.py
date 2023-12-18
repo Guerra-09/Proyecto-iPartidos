@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.views.generic import UpdateView, CreateView, ListView, DetailView
 from registration.models import Tenant
 from canchas.models import Field
+from registration.models import Tenant
 from clubes.forms import ClubForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import Q
 
-#   
+#   View for update club parametters
 class ClubUpdateView(UpdateView):
     model = Tenant
     template_name = 'clubes/club_settings.html'
@@ -30,17 +31,27 @@ class ClubUpdateView(UpdateView):
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
 
-#   
+#   View for listing club field's
+
 class ClubsListView(ListView):
     model = Tenant
     template_name = 'clubes/clubs_list.html'
     context_object_name = 'clubs'
+
+    def get_queryset(self):
+        search = self.request.GET.get('search', '')
+        return Tenant.objects.filter(clubName__icontains=search)
+    
+
+
+
 
 #   
 def field_detail(request):
     return render(request, 'clubes/club_clientDetailView.html')
 
 #   
+@method_decorator(login_required, name='dispatch') 
 class ClubClientDetailView(DetailView):
     model = Tenant
     template_name = 'clubes/club_clientDetailView.html'

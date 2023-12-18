@@ -1,8 +1,13 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <h2> Se ha pagado con exito </h2>
+    <div class="container-md">
+        <h2> Se ha pagado con exito </h2>
 
-    <a href="{% url 'home' %}">Volver</a>
+        <a href="{% url 'home' %}">Volver</a>
+    </div>
+
+
+{% include 'core/footer.html' %}
 
 {% endblock %}

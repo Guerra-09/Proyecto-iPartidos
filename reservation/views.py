@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from canchas.models import Field
 from .models import Reservation
+from .forms import PaymentForm
 from registration.models import ReservationHistory 
 from registration.models import Client
 from django.utils import timezone
@@ -50,7 +51,9 @@ def index(request, field_id):
 
     return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
 
+
 def payment(request):
+    #form = PaymentForm(request.POST or None)
     if request.method == 'POST' or request.session.get('field_id'):
         field_id = request.POST.get('field_id', request.session.get('field_id'))
         date_str = request.POST.get('date', request.session.get('date'))
@@ -71,7 +74,8 @@ def payment(request):
                 'date': date,
                 'time': time,
                 'price': field.price,
-                'players' : field.playersPerSide
+                'players' : field.playersPerSide,
+                # Add form to the context
             }
 
             return render(request, 'reservation/reservation_payment.html', context)
@@ -82,6 +86,9 @@ def payment(request):
         return render(request, 'reservation/reservation_payment.html')
 
 def create_reservation(request):
+
+    form = PaymentForm(request.POST)
+
     if request.method == 'POST':
         field_id = request.session.get('field_id')
         date_str = request.session.get('date')
@@ -134,6 +141,6 @@ def create_reservation(request):
     else:
         return redirect('payment')
 
+
 def payment_success(request):
     return render(request, 'reservation/reservation_payment_success.html')
-

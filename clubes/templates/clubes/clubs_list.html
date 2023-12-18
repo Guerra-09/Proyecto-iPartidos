@@ -2,29 +2,45 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container-md">
     {% load static %}
-    
-    {% for club in clubs %}
-        {% if club.clubName or club.clubDescription or club.clubAddress %}
-            <h1>{{ club.clubName }}</h1>
-            {% if club.clubDescription %}
-                <p>Descripcion: {{ club.clubDescription }}</p>
+
+    <h1 class="display-4" style="margin-top: 30px; margin-bottom: 50px;">Todas los clubes de iPartidos</h1>
+
+    <form class="d-flex" role="search" method="get">
+        <input name="search" class="form-control me-2" type="search" placeholder="Buscar club" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Buscar</button>
+    </form>
+
+    <div class="row" style="margin-top: 30px;">
+        {% for club in clubs %}
+            {% if club.clubName or club.clubDescription or club.clubAddress %}
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card" style="width: 100%; min-height: 400px; display: flex; flex-direction: column;">
+                    {% if club.clubPhoto %}
+                        <img src="{{ club.clubPhoto.url }}" class="card-img-top" alt="...">
+                    {% else %}
+                        <img src="{% static 'core/img/noPhoto.jpg' %}" class="card-img-top" alt="...">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="card-title">{{ club.clubName }}</h5>
+                            <p>{{ club.clubDescription }}</p>
+                            <div class="card-text">
+                                <p><img src="{% static 'core/img/clock.svg' %}" alt="">
+                                    Abierto de {{ club.clubApertureTime|date:"H:i" }} a {{ club.clubClosureTime|date:"H:i" }}</p>
+                                <p>{{ club.clubAddress }}</p>
+                            </div>
+                        </div>
+                        <a href="{% url 'field_detail' pk=club.id %}" class="btn btn-primary btn-block">Reservar</a>
+                    </div>
+                </div>
+            </div>
             {% endif %}
-            {% if club.clubAddress %}
-                <p>Direccion: {{ club.clubAddress }}</p>
-            {% endif %}
-            <p>Dueno: {{ club.tenant.username }}</p>
-            {% if club.tenant.clubPhoto %}
-                <img src="{{ club.clubPhoto.url }}">
-            {% else %}
-                <p>No tiene foto</p>
-            {% endif %}
-            <br>
-            <a href="{% url 'field_detail' club.id %}">
-                <button type="button" class="btn btn-primary btn-sm">Reservar</button>
-            </a>
-        {% endif %}
-    {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'core/footer.html' %}
 
 {% endblock %}

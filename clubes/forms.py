@@ -1,7 +1,15 @@
 from django import forms
 from registration.models import Tenant
+import datetime
+
+HOUR_CHOICES = [(datetime.time(i).strftime('%H:%M'), '{:02d}:00'.format(i)) for i in range(24)]
+
 
 class ClubForm(forms.ModelForm):
+
+    clubApertureTime = forms.ChoiceField(choices=HOUR_CHOICES, label='Hora de apertura del club')
+    clubClosureTime = forms.ChoiceField(choices=HOUR_CHOICES, label='Hora de cierre del club')
+
     class Meta:
         model = Tenant
         fields = ['clubName', 'clubDescription', 'clubPhoto', 'clubAddress', 'clubApertureTime', 'clubClosureTime']
@@ -10,8 +18,6 @@ class ClubForm(forms.ModelForm):
             'clubDescription': forms.TextInput(attrs={'class': 'form-control'}),
             'clubPhoto': forms.FileInput(attrs={'class': 'form-control'}),
             'clubAddress': forms.TextInput(attrs={'class': 'form-control'}),
-            'clubApertureTime': forms.TimeInput(attrs={'type': 'time'}),
-            'clubClosureTime': forms.TimeInput(attrs={'type': 'time'}),
         }
         labels = {
             'clubName': 'Nombre del club',

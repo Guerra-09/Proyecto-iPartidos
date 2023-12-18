@@ -1,33 +1,59 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-  {% for faq in faqs %}
 
-  <div class="accordion accordion-flush" id="accordionFlushExample">
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
-          {{ faq.title }}
-        </button>
-      </h2>
-      <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-        <div class="accordion-body">
-          {{ faq.answer }}
-        </div>
-      </div>
-    </div>
+<div class='container-md'>
+  <div>
+    <h2 class="display-4" style="margin-top: 50px; margin-bottom: 20px;">Preguntas frecuentes</h2>
+
+    <p>
+      Este es un apartado donde estan la mayoria de preguntas que se podrian tener
+      con respecto al sitio web. Si no encuentras la respuesta a tu pregunta, puedes
+      contactarnos en la seccion de <a href="#support">contacto</a>. No olvides que este
+      medio es tanto para consultas y/o reclamos, no para hacer spam o enviar un saludo a un
+      adminsitrador. Para ver las preguntas frecuentes, basta con hacer clic en el titulo y se despliegara mas informacion al respecto.
+    </p>
+
   </div>
-  {% endfor %} 
 
 
+  <div class="accordion" id="accordionExample" style="margin-top: 50px; margin-bottom: 100px;">
+    {% for faq in faqs %}
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                {{ faq.title }}
+            </button>
+        </h2>
+        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                {{ faq.answer }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+  <h2 id="support">Contactate con soporte</h2>
+
+  {% load widget_tweaks %}
+
+  
   <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <button type="submit">Enviar</button>
-
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field|add_class:"form-control" }}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary">Enviar</button>
   </form>
+</div>
 
-  {% comment %} Quiero {% endcomment %}
+
+{% include 'core/footer.html' %}
+
 
 {% endblock %}

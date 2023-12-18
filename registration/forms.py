@@ -15,16 +15,15 @@ from django.conf import settings
 
 # User Register Form
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, initial=' @gmail.com')
-    name = forms.CharField(max_length=200, initial='prueba')
-    last_name = forms.CharField(max_length=200, initial='prueba')
-    bornDate = forms.DateField(initial='2000-01-01')
-    phoneNumber = forms.CharField(max_length=20, initial='1234567890')
-    role = forms.BooleanField(required=False)
+    email = forms.EmailField(required=True, initial=' @gmail.com', label='Correo electrónico')
+    name = forms.CharField(max_length=200, initial='prueba', label='Nombre')
+    last_name = forms.CharField(max_length=200, initial='prueba', label='Apellido')
+    phoneNumber = forms.CharField(max_length=20, initial='123456789', label='Número de teléfono')
+    role = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     
     class Meta:
         model = Tenant
-        fields = ['name', 'last_name', 'email', 'password1', 'password2', 'bornDate', 'phoneNumber', 'role']
+        fields = ['name', 'last_name', 'email', 'password1', 'password2', 'phoneNumber', 'role']
 
         widgets = {
             'password1': forms.PasswordInput(attrs={'class': 'form-control'}),
@@ -32,13 +31,9 @@ class CustomUserCreationForm(UserCreationForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'bornDate': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'phoneNumber': forms.TextInput(attrs={'class': 'form-control'}),
-            'role': CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-        labels = {
-            'role': 'Registrar un club',
-        }
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -72,7 +67,6 @@ class CustomUserCreationForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         user.name = self.cleaned_data['name']
         user.last_name = self.cleaned_data['last_name']
-        user.bornDate = self.cleaned_data['bornDate']
         user.phoneNumber = self.cleaned_data['phoneNumber']
 
         if commit:

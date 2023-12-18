@@ -1,18 +1,28 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <h2 class="text-center">Regístrate</h2>
-    <div class="row mt-3 d-flex">
-        <form id="signup-form" method="post">
-            {% csrf_token %}
-            
-            {{ form.as_p }}
+    <div class="container-md">
+        <h2 class="display-4">Regístrate</h2>
+        <div>
+            <form id="signup-form" method="post" class="col-md-8">  <!-- Cambia esta línea -->
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="form-group">
+                        {% if field.name == 'role' %}
+                            <label for="{{ field.id_for_label }}">Registrar club</label>
+                            <input type="checkbox" class="form-check-input" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
+                        {% else %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.field.required %}required{% endif %}>
+                        {% endif %}
+                    </div>
+                {% endfor %}
 
-            <p>
-                <input type="submit" class="btn btn-success" name="account_type" value="Registrarse">
-            </p>
-
-
-        </form>
+                <p>
+                    <input type="submit" class="btn btn-success" name="account_type" value="Registrarse">
+                </p>
+            </form>
+        </div>
     </div>
 {% endblock %}

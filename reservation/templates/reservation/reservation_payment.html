@@ -2,20 +2,31 @@
 
 {% block content %}
 
-    <h2>Resumen de la reserva</h2>
-    <p>Fecha: {{ date }}</p>
-    <p>Hora: {{ time }}</p>
-    <p>Nombre de la cancha: {{ field.name }}</p>
-    <p>Jugadores por lado: {{ players }}</p>
-    <p>Precio: {{ price }}</p>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'reservation/css/style.css' %}">
+    </head>
 
+    <div class="container-md">
+        <h2 class="display-4">Resumen de la reserva</h2>
+        <p>Fecha: {{ date }}</p>
+        <p>Hora: {{ time }}</p>
+        <p>Nombre de la cancha: {{ field.name }}</p>
+        <p>Jugadores por lado: {{ players }}</p>
+        <p>Precio: {{ price }}</p>
 
-    <div>
-        <a href="#" onclick="window.history.back();">volver</a>
+        <h3 class="display-6" style="margin-top: 50px;">Detalles de la tarjeta de crédito</h3>
+
+        <form method="post" action="{% url 'create_reservation' %}">
+            {% csrf_token %}
+            <div class="container">
+                <div class="input">
+                    {{ form.as_p }}
+                    <input class="form-submit" type="submit" value="Pay Now" />
+                </div>
+            </div>
+        </form>
     </div>
-    <form method="post" action="{% url 'create_reservation' %}">
-        {% csrf_token %}
-        <input type="submit" value="PAGAR">
-    </form>
 
+{% include 'core/footer.html' %}
 {% endblock %}

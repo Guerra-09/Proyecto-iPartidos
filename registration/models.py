@@ -7,13 +7,12 @@ from reservation.models import Reservation
 
 
 class UsuarioProfile(AbstractUser):
-    name = models.CharField(max_length=200, default='',) 
-    last_name = models.CharField(max_length=200, default='')
+    name = models.CharField(max_length=200, default='', verbose_name="Nombre") 
+    last_name = models.CharField(max_length=200, default='', verbose_name="Apellido")
     email = models.EmailField(max_length=254, unique=True, default='')
-    bornDate = models.DateField('Fecha de nacimiento', null=True, blank=True,)
-    phoneNumber = models.CharField(max_length=20, blank=True)
-    role = models.CharField(max_length=100, default='tenant')
-    state = models.BooleanField(default=False)
+    phoneNumber = models.CharField(max_length=20, blank=True, verbose_name='Número de teléfono', default='1234567890')
+    role = models.CharField(max_length=100, default='client', verbose_name='Crear cuenta como club')
+    state = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return f'{self.name} {self.last_name}'
