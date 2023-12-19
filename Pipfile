@@ -11,6 +11,7 @@ pylint-django = "*"
 google-auth = "*"
 secure-smtplib = "*"
 python-dotenv = "*"
+django-widget-tweaks = "*"
 
 [dev-packages]
 

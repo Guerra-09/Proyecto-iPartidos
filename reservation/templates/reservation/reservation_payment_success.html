@@ -2,9 +2,20 @@
 
 {% block content %}
     <div class="container-md">
-        <h2> Se ha pagado con exito </h2>
+        <h2 class="display-4">Pago realizado con exito </h2>
 
-        <a href="{% url 'home' %}">Volver</a>
+        <p>Tu pedido</p>
+
+        <p>Carta con el pedido hecho</p>
+
+
+        <p>Se envio a tu correo esta informacion</p>
+        <p>Gracias por reservar</p>
+
+        <a href="{% url 'user_reserves' request.user.id %}">
+            <button type="button" class="btn btn-primay">Ver mis reservas</button>
+        </a>
+        <a href="{% url 'home' %}">Ir al inicio</a>
     </div>
 
 

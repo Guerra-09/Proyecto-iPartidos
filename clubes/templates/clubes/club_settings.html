@@ -8,6 +8,17 @@
             {% csrf_token %}
             {{ form.as_p}}
 
+            {% if form.instance.clubImage %}
+                <div class="form-group">
+                    <label for="id_delete_image">Eliminar imagen actual:</label>
+                    <input type="checkbox" name="delete_image" id="id_delete_image">
+                </div>
+                <div class="form-group">
+                    <label for="id_current_image">Imagen actual:</label>
+                    <img src="{{ form.instance.clubImage.url }}" alt="Current Image" id="id_current_image">
+                </div>
+            {% endif %}
+
             <input type="submit" class="btn btn-success btn-lg" style="margin-top: 30px;" value="Guardar" />
         </form>
 

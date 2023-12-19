@@ -36,13 +36,6 @@ def index(request, field_id):
             return redirect('payment')
 
 
-
-    # reservations = FieldRentHistory.objects.filter(
-    #     reservation__field=field, 
-    #     reservation__dateToReservate__date=selected_date, 
-    #     reservation__status__in=['completed', 'confirmed'] 
-    # )
-        
     reservations = FieldRentHistory.objects.filter(
         reservation__field=field, 
         reservation__dateToReservate__date=selected_date, 
