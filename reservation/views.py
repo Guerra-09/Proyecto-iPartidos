@@ -10,8 +10,9 @@ from registration.models import FieldRentHistory
 from datetime import datetime
 from .utils import get_all_possible_times_for_a_day
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
 
-
+# This func gets time available and returns it to the view
 def index(request, field_id):
     field = Field.objects.get(id=field_id)  
     tenant = field.tenant  
@@ -36,10 +37,16 @@ def index(request, field_id):
 
 
 
+    # reservations = FieldRentHistory.objects.filter(
+    #     reservation__field=field, 
+    #     reservation__dateToReservate__date=selected_date, 
+    #     reservation__status__in=['completed', 'confirmed'] 
+    # )
+        
     reservations = FieldRentHistory.objects.filter(
         reservation__field=field, 
         reservation__dateToReservate__date=selected_date, 
-        reservation__status__in=['pending', 'cancelled'] 
+        reservation__status__in=['pending'] 
     )
 
     reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
@@ -57,8 +64,17 @@ def index(request, field_id):
 
 
 def payment(request):
-    #form = PaymentForm(request.POST or None)
+
+    #form = PaymentForm(request.POST or None) 
     if request.method == 'POST' or request.session.get('field_id'):
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            print("Form valido")
+        else:
+            print('esta invalido')
+
+
+
         field_id = request.POST.get('field_id', request.session.get('field_id'))
         date_str = request.POST.get('date', request.session.get('date'))
         time_str = request.POST.get('time', request.session.get('time'))
@@ -79,21 +95,23 @@ def payment(request):
                 'time': time,
                 'price': field.price,
                 'players' : field.playersPerSide,
-                # Add form to the context
+                'form' : form
+                
             }
 
-            return render(request, 'reservation/reservation_payment.html', context)
+            return render(request, 'reservation/reservation_payment.html', context )
         else:
             return render(request, 'reservation/reservation_error.html', {'message': 'Date or time not provided'})
 
     else:
-        return render(request, 'reservation/reservation_payment.html')
+        form = PaymentForm()
+        return render(request, 'reservation/reservation_payment.html', {'form': form})
 
 
 def create_reservation(request):
-    form = PaymentForm(request.POST)
 
     if request.method == 'POST':
+
         field_id = request.session.get('field_id')
         date_str = request.session.get('date')
         time_str = request.session.get('time')
@@ -173,7 +191,9 @@ def create_reservation(request):
             return render(request, 'reservation/reservation_error.html', {'message': 'Date or time not provided'})
 
     else:
-        return redirect('payment')
+        
+        form = PaymentForm()
+        return render(request, 'reservation/payment')
 
 
 def payment_success(request):

@@ -7,13 +7,24 @@
         <link rel="stylesheet" href="{% static 'reservation/css/style.css' %}">
     </head>
 
+
+
     <div class="container-md">
-        <h2 class="display-4">Resumen de la reserva</h2>
-        <p>Fecha: {{ date }}</p>
-        <p>Hora: {{ time }}</p>
-        <p>Nombre de la cancha: {{ field.name }}</p>
-        <p>Jugadores por lado: {{ players }}</p>
-        <p>Precio: {{ price }}</p>
+       
+        <h2 style="margin-top: 30px; margin-bottom: 30px;" class="display-4">Detalles de la reserva</h2>
+    
+        <div class="card mb-4 shadow-sm d-flex justify-content-center align-items-center" style="max-width: 600px; margin: auto;">
+            <div class="card-body">
+                <div>
+                    <h6 class="card-subtitle mb-2 text-body-secondary"><b>Cancha: {{ field.name }}</b></h6>
+                    <p>Fecha: {{ date }}</p>
+                    <p>Hora: {{ time }}</p>
+                    <p>Jugadores por lado: {{ players }}</p>
+                    <p><b>Precio: ${{ price }}</b></p>
+                </div>
+            </div>
+        </div>
+        
 
         <h3 class="display-6" style="margin-top: 50px;">Detalles de la tarjeta de crédito</h3>
 
@@ -22,11 +33,23 @@
             <div class="container">
                 <div class="input">
                     {{ form.as_p }}
+
                     <input class="form-submit" type="submit" value="Pay Now" />
                 </div>
             </div>
         </form>
     </div>
 
-{% include 'core/footer.html' %}
+    
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://rawgit.com/RobinHerbots/Inputmask/5.x/dist/jquery.inputmask.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(":input").inputmask();
+        });
+    </script>
+
+    {% include 'core/footer.html' %}
+
 {% endblock %}

@@ -70,9 +70,9 @@ class Client(UsuarioProfile):
         verbose_name_plural = 'Clients'
 
 STATUS_CHOICES = [
-    ('pending', 'Pending'),
-    ('completed', 'Completed'),
-    ('cancelled', 'Cancelled'),
+    ('pending', 'pending'),
+    ('completed', 'completed'),
+    ('cancelled', 'cancelled'),
 ]
 
 class FieldRentHistory(models.Model):

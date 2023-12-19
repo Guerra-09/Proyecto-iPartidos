@@ -32,9 +32,10 @@
                                 <p>{{ club.clubAddress }}</p>
                             </div>
                         </div>
-                        {% if request.user.role != 'client' or request.user.is_superuser %}
-                        {% else %}
+                        {% if request.user.role == 'client' %}
                             <a href="{% url 'field_detail' pk=club.id %}" class="btn btn-primary btn-block">Reservar</a>
+                        {% elif not request.user.is_authenticated %}
+                            <a href="{% url 'login' %}" class="btn btn-primary btn-block">Reservar</a>
                         {% endif %}
 
 

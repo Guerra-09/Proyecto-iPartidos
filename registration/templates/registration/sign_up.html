@@ -10,8 +10,8 @@
                 {% for field in form %}
                     <div class="form-group">
                         {% if field.name == 'role' %}
-                            <label for="{{ field.id_for_label }}">Registrar club</label>
-                            <input type="checkbox" class="form-check-input" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
+                            <label style="margin-top: 10px;" for="{{ field.id_for_label }}">Registrar club</label>
+                            <input style="margin-top: 15px;" type="checkbox" class="form-check-input" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
                         {% else %}
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.field.required %}required{% endif %}>
@@ -20,7 +20,7 @@
                 {% endfor %}
 
                 <p>
-                    <input type="submit" class="btn btn-success" name="account_type" value="Registrarse">
+                    <input style="margin-top: 20px;" type="submit" class="btn btn-success" name="account_type" value="Registrarse">
                 </p>
             </form>
         </div>

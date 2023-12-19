@@ -68,11 +68,18 @@ def clients_reservations(request):
 
 def delete_client_reservation(request, reservation_id):
     rent_history = get_object_or_404(FieldRentHistory, reservation_id=reservation_id)
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    reservation.status = 'cancelled'
+    print("REservation before save", reservation.status, reservation.id)
+    reservation.save()
+    print("REservation after save", reservation.status, reservation.id)
+
+
     user = rent_history.takenBy
     reservation_histories = ReservationHistory.objects.filter(client=user, field=rent_history.reservation.field, dateToReservate=rent_history.reservation.dateToReservate)
     reservation_histories.update(status='cancelled')
-
-
+    rent_history.reservation.status = 'cancelled'
+    rent_history.save()
     
 
 

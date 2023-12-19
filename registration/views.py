@@ -209,6 +209,8 @@ def change_reservation(request, reservation_id):
 
 def confirm_reservation(request, reservation_id):
     reservation = get_object_or_404(ReservationHistory, id=reservation_id)
+
+    print("FLAGGG")
     if request.method == 'POST':
         reservation.status = 'cancelled'
         reservation.save()
@@ -233,13 +235,18 @@ def confirm_reservation(request, reservation_id):
     
 @login_required
 def cancel_reservation(request, reservation_id):
-    reservation = get_object_or_404(ReservationHistory, id=reservation_id)
-    
-    print(f'Before cancellation: {reservation.status}')
+    reservation_history = get_object_or_404(ReservationHistory, id=reservation_id)
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+
+    print(f'Before cancellation: {reservation_history.status}')
     if request.method == 'POST':
+        reservation_history.status = 'cancelled'
+        reservation_history.save()
+
         reservation.status = 'cancelled'
         reservation.save()
-        print(f'After cancellation: {reservation.status}')
+
+        print(f'After cancellation: {reservation_history.status}')
         return redirect('user_reserves', pk=request.user.pk)
 
 
