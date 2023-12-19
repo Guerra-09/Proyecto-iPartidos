@@ -38,6 +38,7 @@
                 {% csrf_token %}
     
             {% for field in fields %}
+                {% if field.isActive == True %}
                 <div class='container'>
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body d-flex flex-column flex-md-row justify-content-between" style="flex-direction: column; justify-content: flex-start;">
@@ -64,6 +65,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
           
 
             {% empty %}

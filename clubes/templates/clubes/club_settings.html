@@ -4,12 +4,20 @@
     <div class='container-sm'>
         <h1 class="display-4" style='margin-top: 20px; margin-bottom: 20px;'>Modifica tu club</h1>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p}}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p}}
 
-        <input type="submit" class="btn btn-success btn-lg" style="margin-top: 30px;" value="Guardar" />
-    </form>
+            <input type="submit" class="btn btn-success btn-lg" style="margin-top: 30px;" value="Guardar" />
+        </form>
+
+
+        <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Tus ingresos</h1>
+
+        
+        ${{ total_price }}
+
+
     </div>
 
 

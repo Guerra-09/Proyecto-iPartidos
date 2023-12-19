@@ -10,6 +10,7 @@ urlpatterns = [
     path('password_recovery/', views.password_recovery, name='password_recovery'),
     path('change_password/', views.change_password, name='change_password'),
     path('user_reserves/<int:pk>/', views.user_reserves, name='user_reserves'),
-    path('edit_reservation/<int:reservation_id>/', views.edit_reservation, name='edit_reservation'),
     path('cancel_reservation/<int:reservation_id>/', views.cancel_reservation, name='cancel_reservation'),
+    path('reservation_update/<int:reservation_id>/', views.change_reservation, name='reservation_update'),
+    path('reservation_update_success/<int:reservation_id>/', views.confirm_reservation, name='confirm_reservation'),
 ]

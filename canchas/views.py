@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Field
+from registration.models import FieldRentHistory, ReservationHistory
 from .forms import FieldForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -8,7 +9,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+from reservation.models import Reservation
 
 
 class FieldListView(ListView):
@@ -59,3 +60,23 @@ class FieldDetailView(DetailView):
     context_object_name = 'cancha'
 
 
+def clients_reservations(request):
+    rent_histories = FieldRentHistory.objects.filter(reservation__field__tenant=request.user.tenant).order_by('-id')
+    print(rent_histories)
+    return render(request, 'canchas/clients_reservations.html', {'reservations': rent_histories})
+
+
+def delete_client_reservation(request, reservation_id):
+    rent_history = get_object_or_404(FieldRentHistory, reservation_id=reservation_id)
+    reservation_history = get_object_or_404(ReservationHistory, field=rent_history.reservation.field, dateToReservate=rent_history.reservation.dateToReservate)
+    rent_history.reservation.status= "cancelled"
+    reservation_history.status = 'cancelled'
+    reservation_history.save()
+    rent_history.delete()
+
+    print("---")
+
+
+
+    return render(request, 'canchas/client_reservation_deleted_successfully.html')
+    

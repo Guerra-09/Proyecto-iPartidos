@@ -2,12 +2,14 @@ from django.shortcuts import render
 from django.views.generic import UpdateView, CreateView, ListView, DetailView
 from registration.models import Tenant
 from canchas.models import Field
+from reservation.models import Reservation
 from registration.models import Tenant
 from clubes.forms import ClubForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.db.models import Sum
 
 #   View for update club parametters
 class ClubUpdateView(UpdateView):
@@ -15,6 +17,19 @@ class ClubUpdateView(UpdateView):
     template_name = 'clubes/club_settings.html'
     form_class = ClubForm
     success_url = reverse_lazy('club_settings')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        reservations = Reservation.objects.filter(field__tenant=self.request.user.tenant, status__in=['pending', 'completed'])
+
+        total_price = reservations.aggregate(total=Sum('field__price'))['total']
+
+        context['total_price'] = total_price
+
+        print(total_price)
+
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -32,7 +47,6 @@ class ClubUpdateView(UpdateView):
             raise ValueError("Logged in user is not a Tenant bruh")
 
 #   View for listing club field's
-
 class ClubsListView(ListView):
     model = Tenant
     template_name = 'clubes/clubs_list.html'
@@ -42,8 +56,6 @@ class ClubsListView(ListView):
         search = self.request.GET.get('search', '')
         return Tenant.objects.filter(clubName__icontains=search)
     
-
-
 
 
 #   

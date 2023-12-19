@@ -3,6 +3,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.views import LoginView
 from django.views.generic.detail import DetailView
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 from .models import Tenant, Client, FieldRentHistory, ReservationHistory
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomUserChangeForm, PasswordRecoveryForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -23,6 +24,10 @@ from decimal import Decimal, ROUND_DOWN
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import Reservation
+from canchas.models import Field
+from django.db import transaction
+from datetime import datetime
 
 
 
@@ -46,7 +51,7 @@ class SignUpView(CreateView):
 
         return super().form_valid(form)
         
-        
+       
 # User Profile View    
 class ProfileUpdateView(UpdateView):
     model = get_user_model()
@@ -65,7 +70,9 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('home')
-    
+
+
+# User Recovery password view
 def password_recovery(request):
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
@@ -85,7 +92,7 @@ def password_recovery(request):
 
                 print("usuario con nueva contrasena")
 
-                message = f'Hola, esta es tu nueva clave provisioria: {new_password} \nAsegurate de cambiarla desde Mi perfil.' 
+                message = f'Hola, esta es tu nueva clave provisioria: {new_password} \nAsegurate de cambiarla desde Editar perfil.' 
                 email = request.POST.get('email')
 
                 send_mail(
@@ -109,57 +116,131 @@ def password_recovery(request):
     
     return render(request, 'registration/password_recovery.html', {'form': form})
 
+
+# User History View
 def user_reserves(request, pk):
-    user = request.user
-    reservation_history = ReservationHistory.objects.filter(client=user.client).order_by('-dateToReservate')
-    return render(request, 'registration/user_reserves.html', {'reservation_history': reservation_history})
-
-    # User = get_user_model()
-    # user = User.objects.get(pk=pk)
-    # reservations = FieldRentHistory.objects.filter(takenBy=user)
-
-    # if request.method == 'POST':
-    #     reservation_to_delete = get_object_or_404(FieldRentHistory, pk=request.POST.get('reservation_id'))
-    #     print(f"Reservation to delete: {reservation_to_delete}")
-    #     print(f"User: {user}")
-    #     if reservation_to_delete.takenBy.id == user.id:
-    #         print("Deleting reservation")
-    #         reservation = reservation_to_delete.reservation
-    #         reservation.status = 'cancelled'
-    #         reservation.save()
-
-    #         # Update the reservation history
-    #         reservation_history = ReservationHistory.objects.get(
-    #             field=reservation.field,
-    #             dateAtReservation=reservation.dateAtReservation,
-    #             dateToReservate=reservation.dateToReservate,
-    #             client=user.client
-    #         )
-    #         reservation_history.status = 'cancelled'
-    #         reservation_history.save()
-
-    #         reservation_to_delete.delete()
-    #     else:
-    #         print("User did not create this reservation")
-    #     return HttpResponseRedirect(reverse('user_reserves', args=[str(user.pk)]))
-
-    # return render(request, 'registration/user_reserves.html', {'reservations': reservations})
-
-@login_required
-def edit_reservation(request, reservation_id):
-    reservation = get_object_or_404(ReservationHistory, id=reservation_id)
-    if request.method == 'POST':
-        # Aquí puedes agregar el código para editar la reserva
-        # ...
-        return redirect('user_reserves', pk=request.user.pk)
+    user = request.user 
+    field_rent_history = FieldRentHistory.objects.filter(takenBy=user.id).order_by('-created_at')
+    reservation_history = ReservationHistory.objects.filter(client=request.user).order_by('-created_at')
     
-@login_required
-def cancel_reservation(request, reservation_id):
+    reservation_ids = []
+    context = []
+    
+    for field_rent in field_rent_history:
+        reservation_ids.append(field_rent.reservation.id)
+
+    reservation_ids = list(reversed(reservation_ids))
+
+    for i in range(len(field_rent_history)):
+        field_rent = field_rent_history[i]
+        reservation = reservation_history[i]
+        
+        context.append({
+            'reservationHistory_id' : field_rent.id,
+            'status':field_rent.reservation.status,
+            'name': field_rent.reservation.field.name,
+            'price': field_rent.reservation.price,
+            'date': field_rent.reservation.dateToReservate,
+            'id': reservation_ids[i],
+            'reservation_history': reservation
+        })
+
+
+    for reservation in reservation_history:
+        if reservation.dateToReservate < timezone.now() and reservation.status != 'cancelled':
+            reservation.status = 'completed'
+            reservation.save()
+
+    return render(request, 'registration/user_reserves.html', {'context': context})
+
+
+
+
+
+
+
+
+
+
+
+
+def change_reservation(request, reservation_id):
+    reservation = get_object_or_404(ReservationHistory, id=reservation_id)
+    field = reservation.field
+    tenant = field.tenant
+    today = timezone.now().date()
+    selected_date = today
+    available_times = []
+
+    if request.method == 'POST':
+
+        if 'date' in request.POST:
+            selected_date_str = request.POST.get('date')
+            selected_date = timezone.make_aware(datetime.strptime(selected_date_str, "%Y-%m-%d"))
+            request.session['field_id'] = field.id
+            request.session['date'] = selected_date_str
+
+        if 'time' in request.POST:
+            field_id = request.POST.get('field_id')
+            time = request.POST.get('time')
+            date_str = request.POST.get('date')
+            date = timezone.make_aware(datetime.strptime(date_str, "%Y-%m-%d"))
+            
+        
+
+
+    reservations = ReservationHistory.objects.filter(field=field, dateToReservate__date=selected_date, status='pending').exclude(status='cancelled')
+    reserved_times = reservations.values_list('dateToReservate__time', flat=True)
+    reserved_times = [t.strftime("%H:%M") for t in reserved_times]
+
+    available_times = tenant.get_available_times_for_date(selected_date)
+
+
+    available_times = [t.strftime('%H:%M') for t in available_times]
+    available_times = [t for t in available_times if t not in reserved_times]
+
+
+    return render(request, 'registration/reservation_update.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date, 'reservation': reservation, })
+
+
+
+
+def confirm_reservation(request, reservation_id):
     reservation = get_object_or_404(ReservationHistory, id=reservation_id)
     if request.method == 'POST':
         reservation.status = 'cancelled'
         reservation.save()
+        messages.success(request, 'Se cambió la reserva.')
+        
+        new_reservation = ReservationHistory()
+        new_reservation.field = reservation.field
+        new_reservation.client = request.user.client
+        new_reservation.status = 'pending'
+        print(new_reservation.status)
+        new_date_str = request.POST.get('date')
+        new_time_str = request.POST.get('time')
+        new_date = timezone.make_aware(datetime.strptime(new_date_str, "%Y-%m-%d"))
+        new_time = datetime.strptime(new_time_str, "%H:%M").time()
+        new_reservation.dateToReservate = datetime.combine(new_date, new_time)
+        new_reservation.dateAtReservation = timezone.now()  
+        new_reservation.price = reservation.price
+        new_reservation.save()
+        
+    return redirect('user_reserves', pk=request.user.pk)
+    
+    
+@login_required
+def cancel_reservation(request, reservation_id):
+    reservation = get_object_or_404(ReservationHistory, id=reservation_id)
+    
+    print(f'Before cancellation: {reservation.status}')
+    if request.method == 'POST':
+        reservation.status = 'cancelled'
+        reservation.save()
+        print(f'After cancellation: {reservation.status}')
         return redirect('user_reserves', pk=request.user.pk)
+
+
 
 def change_password(request):
     if request.method == 'POST':

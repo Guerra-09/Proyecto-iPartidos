@@ -7,8 +7,9 @@ from registration.models import Client
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from registration.models import FieldRentHistory
-from django.http import HttpResponseRedirect
-from datetime import datetime, date, time
+from datetime import datetime
+from .utils import get_all_possible_times_for_a_day
+from django.core.mail import send_mail
 
 
 def index(request, field_id):
@@ -35,18 +36,21 @@ def index(request, field_id):
 
 
 
-    reservations = ReservationHistory.objects.filter(field=field, dateToReservate__date=selected_date, status='pending').exclude(status='cancelled')
-    reserved_times = reservations.values_list('dateToReservate__time', flat=True)
-    reserved_times = [t.strftime("%H:%M") for t in reserved_times]
+    reservations = FieldRentHistory.objects.filter(
+        reservation__field=field, 
+        reservation__dateToReservate__date=selected_date, 
+        reservation__status='pending'
+    )
 
-    available_times = tenant.get_available_times_for_date(selected_date)
+    
+    reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
+  
+    all_times = get_all_possible_times_for_a_day(tenant)
+    print(f"All times: {all_times}")
 
-
-    available_times = [t.strftime('%H:%M') for t in available_times]
-    available_times = [t for t in available_times if t not in reserved_times]
+    available_times = [t for t in all_times if t not in reserved_times]
 
     print(f"Available times: {available_times}")
-    print(f"Reserved times: {reserved_times}")
 
 
     return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
@@ -85,8 +89,8 @@ def payment(request):
     else:
         return render(request, 'reservation/reservation_payment.html')
 
-def create_reservation(request):
 
+def create_reservation(request):
     form = PaymentForm(request.POST)
 
     if request.method == 'POST':
@@ -106,12 +110,21 @@ def create_reservation(request):
 
             date_to_reservate = timezone.make_aware(datetime.combine(date, time))
 
-            reservations = Reservation.objects.filter(field=field, dateToReservate__date=date, status__in=['confirmed', 'completed'])
+            reservations = FieldRentHistory.objects.filter(
+                reservation__field=field, 
+                reservation__dateToReservate__date=date, 
+                reservation__status='pending'
+            )
 
-            available_times = field.tenant.get_available_times_for_date(date)
-            available_times = [t for t in available_times if t not in [r.dateToReservate.time() for r in reservations]]
-            
-            if time not in available_times:
+            reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
+            reserved_times = [t.strftime("%H:%M") for t in reserved_times]
+            all_times = get_all_possible_times_for_a_day(field.tenant)
+            #available_times = [t for t in all_times if t not in reserved_times]
+            available_times = [t for t in all_times if t not in reserved_times]
+
+            time_str = time.strftime("%H:%M")  # Convertir a string
+
+            if time_str not in available_times:
                 return render(request, 'reservation/reservation_error.html', {'message': 'Time is not available'})
 
             reservation = Reservation.objects.create(
@@ -132,6 +145,27 @@ def create_reservation(request):
             )
 
             field_rent_history = FieldRentHistory.objects.create(takenBy=client, reservation=reservation)
+
+
+            message = f"""
+                Hola {request.user.username},
+
+                Tu reserva ha sido creada con éxito. Aquí están los detalles de tu reserva:
+
+                Código de reserva: {reservation.id}
+                Fecha y hora de la reserva: {reservation.dateToReservate.strftime('%d-%m-%Y %H:%M')}hrs
+                Nombre de la cancha: {field.name}
+                Precio pagado: {reservation.price}
+
+                Gracias por tu reserva.
+            """
+
+            send_mail(
+                'Reserva creada',  # Asunto
+                message,
+                'djangoa353@gmail.com',  # Change to env environment variable
+                [request.user.email], 
+            )
 
             return redirect('payment_success')
 

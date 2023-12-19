@@ -51,10 +51,13 @@ class Tenant(UsuarioProfile):
         reservations = ReservationHistory.objects.filter(dateToReservate__date=selected_date, field__tenant=self).exclude(status='cancelled')
 
         reserved_times = [reservation.dateToReservate.time() for reservation in reservations]
+        print(f"MODEL: Reserved times: {reserved_times}")
 
         all_times = self.get_available_times()
 
         available_times = [t for t in all_times if t not in reserved_times]
+
+        print(f"MODEL: Available times: {available_times}")
 
         return available_times
 
@@ -69,11 +72,13 @@ class Client(UsuarioProfile):
 STATUS_CHOICES = [
     ('confirmed', 'Confirmed'),
     ('completed', 'Completed'),
+    ('cancelled', 'Cancelled'),
 ]
 
 class FieldRentHistory(models.Model):
     takenBy = models.ForeignKey(Client, on_delete=models.CASCADE)
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class ReservationHistory(models.Model):
@@ -83,3 +88,4 @@ class ReservationHistory(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

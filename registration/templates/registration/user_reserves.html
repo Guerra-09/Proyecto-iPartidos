@@ -2,38 +2,63 @@
 
 {% block content %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Mis reservas</h1>
-                {% for reservation in reservation_history %}
-                    <div>
-                        {% if reservation.status == 'cancelled' %}
-                            <h2 style="color: red;">Reserva #{{ reservation.id }}</h2>
-                        {% else %}
-                            <h2 style="color: green;">Reserva #{{ reservation.id }}</h2>
-                        {% endif %}
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Mis reservas</h1>
 
-                        <p>Fecha: {{ reservation.dateToReservate }}</p>
-                        <p>Campo: {{ reservation.field.name }}</p>
-                        <p>Estado: {{ reservation.status }}</p>
-                        {% if reservation.status != 'cancelled' %}
-                            <form method="post" action="{% url 'edit_reservation' reservation.id %}">
-                                {% csrf_token %}
-                                <button type="submit">Cambiar fecha y/o hora</button>
-                            </form>
-                            <form method="post" action="{% url 'cancel_reservation' reservation.id %}">
-                                {% csrf_token %}
-                                <button type="submit">Cancelar reserva</button>
-                            </form>
-                        {% endif %}
+            {% for reservation in context %}
 
+                <h1>{{ reservation.reservation_history.status }}</h1>
+
+                <div class="card text-center" style="margin-top: 30xp; margin-bottom: 30px;">
+                    <div class="card-header" 
+                         style="background-color: 
+                         {% if reservation.reservation_history.status == 'pending' %}green{% elif reservation.reservation_history.status == 'completed' %}gray{% else %}red{% endif %};">
+                        <p class="card-text" style="color: white;">
+                            Estado: 
+                            {% if reservation.reservation_history.status == 'pending' %}
+                                Pendiente
+                            {% elif reservation.reservation_history.status == 'completed' %}
+                                Completado
+                            {% else %}
+                                cancelado
+                            {% endif %}
+                        </p>
                     </div>
-                {% empty %}
-                    <p>No has realizado ninguna reserva.</p>
-                {% endfor %}
-            </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                        {{ reservation.name }}</h5>
+                        <p>Precio: ${{ reservation.price }}</p>
+                        Fecha: {{ reservation.date }}
+                        {% if reservation.reservation_history.status == 'pending' %}
+                            <div class="d-flex justify-content-start" style="margin-top: 15px;">
+                                <form class="mr-2" method="post">
+                                    {% csrf_token %}
+                                    <a style="margin-right: 10px;" class="btn btn-primary" href="{% url 'reservation_update' reservation.id %}" >Cambiar fecha y/o hora</a>
+                                </form> 
+                                <form method="post" action="{% url 'cancel_reservation' reservation.reservation_history.id %}">
+                                    {% csrf_token %}
+                                    <button style="margin-right: 10px;" class="btn btn-danger" type="submit">Cancelar reserva</button>
+                                </form> 
+                            </div> 
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-muted">
+                        Codigo de reserva: #{{ reservation.id }}
+                    </div>
+                </div>
+
+            {% empty %}
+                <p>No has realizado ninguna reserva.</p>
+
+            {% endfor %}
         </div>
     </div>
+</div>
+    
+
+{% include 'core/footer.html' %}
 
 {% endblock %}

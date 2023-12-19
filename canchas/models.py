@@ -1,5 +1,8 @@
 from django.db import models
-from registration.models import UsuarioProfile
+from registration.models import UsuarioProfile, Tenant
+from datetime import datetime
+from django.apps import apps
+from datetime import time
 
 
 class Field(models.Model):
@@ -18,9 +21,28 @@ class Field(models.Model):
     fieldPhoto = models.ImageField(upload_to='field_photos', null=True, blank=True) 
     price = models.IntegerField()
     isActive = models.BooleanField(default=True)
-    playersPerSide = models.IntegerField(default=0)  # Provide a default value
+    playersPerSide = models.IntegerField(default=0)
+    opening_time = models.TimeField(default=time(14, 0))
+    closing_time = models.TimeField(default=time(23, 0))
     tenant = models.ForeignKey('registration.Tenant', on_delete=models.CASCADE, related_name='tenant_fields', null=True)
     
+    
+    def get_available_times_for_date(self, selected_date, field):
+        tenant = self.tenant
+        if isinstance(selected_date, str):
+            selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
+
+        ReservationHistory = apps.get_model('registration', 'ReservationHistory')
+        reservations = ReservationHistory.objects.filter(dateToReservate__date=selected_date, field=field).exclude(status='cancelled')
+
+        reserved_times = [reservation.dateToReservate.time() for reservation in reservations]
+
+        all_times = tenant.get_available_times()
+
+        available_times = [t for t in all_times if t not in reserved_times]
+
+        return available_times
+
 
     def __str__(self):
         

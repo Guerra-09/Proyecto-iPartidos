@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class Reservation(models.Model):
     field = models.ForeignKey('canchas.Field', on_delete=models.CASCADE)
     dateAtReservation = models.DateTimeField()

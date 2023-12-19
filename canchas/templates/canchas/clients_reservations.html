@@ -1,0 +1,62 @@
+
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class='container-md'>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 30px;">
+
+            <h1 class="display-4" style="margin-top: 30px;">Tus canchas</h1>
+    
+    
+            <div style="display: flex; justify-content: flex-end;">
+                <a href="{% url 'create_field' %}" style="margin-right: 30px; align-self: center;"> 
+                    <button type="button" class="btn btn-primary" style="margin-top: 15px;">Agregar cancha</button>
+                </a>
+
+                <a href="{% url 'canchas_list' %}"> 
+                    <button type="button" class="btn btn-warning" style="margin-top: 15px;"> Administrar canchas </button>
+                </a>
+            </div>
+        </div>
+    
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+    
+            {% for reservation in reservations %}
+                <div class='container-md'>
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <h6 class="card-subtitle mb-2 text-body-secondary" >Cancha: {{ reservation.reservation.field.name }}</h6>
+                                <h5>ID: #{{ reservation.id }}</h5>
+                                
+                                <p>Estado: {{ reservation.reservation.status }}</p>
+                                <p>Fecha: {{ reservation.reservation.dateToReservate }} hrs</p>
+                                <p>Precio: {{ reservation.reservation.field.price }}</p>
+                                <p>Arrendado por: {{ reservation.takenBy }}</p>
+                            </div>
+                            <div>
+                                <a href="{% url 'client_reservation_delete' reservation.reservation.id %}" class="btn btn-danger">Eliminar reserva</a>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+          
+
+            {% empty %}
+
+
+            <div style="display: flex; justify-content: center; align-items: center; height: 40vh;">
+                <p> No hay reservas creadas </p>
+            </div>
+
+
+
+            {% endfor %}
+        </form>
+    </div>
+
+    {% include 'core/footer.html' %}
+{% endblock %}

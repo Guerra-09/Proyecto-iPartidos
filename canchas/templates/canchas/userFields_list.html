@@ -7,9 +7,15 @@
             <h1 class="display-4" style="margin-top: 30px;">Tus canchas</h1>
     
     
-            <a href="{% url 'create_field' %}" style="align-self: center;"> 
-                <button type="button" class="btn btn-primary" style="margin-top: 30px;">Agregar cancha</button>
-            </a>
+            <div style="display: flex; justify-content: flex-end;">
+                <a href="{% url 'create_field' %}" style="margin-right: 30px; align-self: center;"> 
+                    <button type="button" class="btn btn-primary" style="margin-top: 15px;">Agregar cancha</button>
+                </a>
+
+                <a href="{% url 'clients_reservations' %}"> 
+                    <button type="button" class="btn btn-warning" style="margin-top: 15px;">Ver reservas </button>
+                </a>
+            </div>
         </div>
     
         <form method="post" enctype="multipart/form-data">
@@ -37,6 +43,8 @@
                                 <a href="{% url 'cancha_update' pk=field.id %}" class="card-link d-md-inline d-flex justify-content-center">
                                     <button type="button" class="btn btn-primary" style="margin-top: 10px;">Modificar</button>
                                 </a>
+
+                                
                             </div>
                         
                             {% if field.fieldPhoto %}
