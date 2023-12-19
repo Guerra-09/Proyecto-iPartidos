@@ -131,10 +131,12 @@ def user_reserves(request, pk):
 
     reservation_ids = list(reversed(reservation_ids))
 
+    print(reservation_ids.reverse())
+
     for i in range(len(field_rent_history)):
         field_rent = field_rent_history[i]
         reservation = reservation_history[i]
-        
+
         context.append({
             'reservationHistory_id' : field_rent.id,
             'status':field_rent.reservation.status,

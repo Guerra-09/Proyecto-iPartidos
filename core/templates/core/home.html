@@ -37,7 +37,14 @@
                 <p>Abierto de {{ club.clubApertureTime }} a {{ club.clubClosureTime }}</p>
                 <p>{{ club.clubAddress }}</p>
             </div>
-            <a href="{% url 'field_detail' pk=club.id %}" class="btn btn-primary btn-block">Reservar</a>
+            <a href="{% url 'field_detail' pk=club.id %}" class="btn btn-primary btn-block">
+                
+                {% if request.user.role != 'client' or request.user.is_superuser %}
+                    Ver
+                {% else %}
+                    Reservar
+                {% endif %}
+            </a> 
         </div>
     </div>
     {% endfor %}    

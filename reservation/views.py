@@ -39,12 +39,12 @@ def index(request, field_id):
     reservations = FieldRentHistory.objects.filter(
         reservation__field=field, 
         reservation__dateToReservate__date=selected_date, 
-        reservation__status='pending'
+        reservation__status__in=['pending', 'cancelled'] 
     )
 
-    
     reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
-  
+    reserved_times = [t.strftime('%H:%M') for t in reserved_times]
+
     all_times = get_all_possible_times_for_a_day(tenant)
     print(f"All times: {all_times}")
 

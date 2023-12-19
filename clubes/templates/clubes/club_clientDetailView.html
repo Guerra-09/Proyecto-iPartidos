@@ -51,9 +51,16 @@
                                 <p>Tipo de suelo: {{ field.groundType }}</p>
                         
                                 <p>Jugadores por lado: {{ field.playersPerSide }} </p>   
-                                <a href="{% url 'reservation' field.id %}" class="card-link d-md-inline d-flex justify-content-center">
-                                    <button type="button" class="btn btn-primary" style="margin-top: 10px;">Reservar</button>
-                                </a>
+
+                                {% if request.user.role != 'client' or request.user.is_superuser %}
+                                    
+                                {% else %}
+                                    <a href="{% url 'reservation' field.id %}" class="card-link d-md-inline d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary" style="margin-top: 10px;">Reservar</button>
+                                    </a>
+                                {% endif %}
+
+                                
                             </div>
                         
                             {% if field.fieldPhoto %}

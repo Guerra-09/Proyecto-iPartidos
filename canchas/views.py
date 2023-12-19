@@ -68,14 +68,12 @@ def clients_reservations(request):
 
 def delete_client_reservation(request, reservation_id):
     rent_history = get_object_or_404(FieldRentHistory, reservation_id=reservation_id)
-    reservation_history = get_object_or_404(ReservationHistory, field=rent_history.reservation.field, dateToReservate=rent_history.reservation.dateToReservate)
-    rent_history.reservation.status= "cancelled"
-    reservation_history.status = 'cancelled'
-    reservation_history.save()
-    rent_history.delete()
+    user = rent_history.takenBy
+    reservation_histories = ReservationHistory.objects.filter(client=user, field=rent_history.reservation.field, dateToReservate=rent_history.reservation.dateToReservate)
+    reservation_histories.update(status='cancelled')
 
-    print("---")
 
+    
 
 
     return render(request, 'canchas/client_reservation_deleted_successfully.html')

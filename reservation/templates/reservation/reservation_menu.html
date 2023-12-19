@@ -4,9 +4,7 @@
 
     <div class='container-md'>
         <h1 class="display-4"> {{ field.name }} </h1>
-        <p>Jugadores por lado: {{field.playersPerSide}}</p>     
 
-        <p>Tipo de suelo: {{field.groundType}}</p>
 
         <h4>Escoger fecha</h4>
         <form method="post" action="{% url 'index' field.id %}">
