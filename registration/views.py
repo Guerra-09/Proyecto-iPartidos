@@ -28,6 +28,7 @@ from .models import Reservation
 from canchas.models import Field
 from django.db import transaction
 from datetime import datetime
+from reservation.utils import get_all_possible_times_for_a_day
 
 
 
@@ -162,11 +163,10 @@ def user_reserves(request, pk):
 
 
 
-
-
-
+# Cambio de reserva se hace aqui y se valida en otro lado !!!!!!!!!!!!!!!
 
 def change_reservation(request, reservation_id):
+
     reservation = get_object_or_404(ReservationHistory, id=reservation_id)
     field = reservation.field
     tenant = field.tenant
@@ -187,24 +187,27 @@ def change_reservation(request, reservation_id):
             time = request.POST.get('time')
             date_str = request.POST.get('date')
             date = timezone.make_aware(datetime.strptime(date_str, "%Y-%m-%d"))
-            
-        
 
 
-    reservations = ReservationHistory.objects.filter(field=field, dateToReservate__date=selected_date, status='pending').exclude(status='cancelled')
-    reserved_times = reservations.values_list('dateToReservate__time', flat=True)
-    reserved_times = [t.strftime("%H:%M") for t in reserved_times]
+        reservations = FieldRentHistory.objects.filter(
+            reservation__field=field, 
+            reservation__dateToReservate__date=selected_date, 
+            reservation__status__in=['pending'] 
+        )
 
-    available_times = tenant.get_available_times_for_date(selected_date)
+        reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
+        reserved_times = [t.strftime('%H:%M') for t in reserved_times]
+        all_times = get_all_possible_times_for_a_day(tenant)
+        available_times = [t for t in all_times if t not in reserved_times]
+
+        # Eliminar la reserva previa con el mismo ID
+        previous_reservation = get_object_or_404(Reservation, id=reservation_id)
+        previous_reservation.delete()
 
 
-    available_times = [t.strftime('%H:%M') for t in available_times]
-    available_times = [t for t in available_times if t not in reserved_times]
 
 
-    return render(request, 'registration/reservation_update.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date, 'reservation': reservation, })
-
-
+    return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
 
 
 def confirm_reservation(request, reservation_id):
@@ -235,10 +238,11 @@ def confirm_reservation(request, reservation_id):
     
 @login_required
 def cancel_reservation(request, reservation_id):
-    reservation_history = get_object_or_404(ReservationHistory, id=reservation_id)
-    reservation = get_object_or_404(Reservation, id=reservation_id)
 
-    print(f'Before cancellation: {reservation_history.status}')
+    reservation_history = get_object_or_404(ReservationHistory, id=reservation_id)
+    # El - 1 es necesario ... y muy troll
+    reservation = get_object_or_404(Reservation, id=reservation_id - 1)
+
     if request.method == 'POST':
         reservation_history.status = 'cancelled'
         reservation_history.save()
