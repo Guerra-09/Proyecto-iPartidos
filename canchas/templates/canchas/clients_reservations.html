@@ -35,9 +35,13 @@
                                 <p>Precio: {{ reservation.reservation.field.price }}</p>
                                 <p>Arrendado por: {{ reservation.takenBy }}</p>
                             </div>
-                            <div>
-                                <a href="{% url 'client_reservation_delete' reservation.reservation.id %}" class="btn btn-danger">Eliminar reserva</a>
-                            </div>
+
+                            {% if reservation.reservation.status == 'pending' %}
+                                <div>
+                                    <a href="{% url 'client_reservation_delete' reservation.reservation.id %}" class="btn btn-danger">Eliminar reserva</a>
+                                </div>
+                            {% endif %}
+                            
 
                             
                         </div>

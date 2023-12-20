@@ -183,12 +183,14 @@ def change_reservation(request, reservation_id):
     if request.method == 'POST':
 
         if 'date' in request.POST:
+            print("ENTRO EN DATE")
             selected_date_str = request.POST.get('date')
             selected_date = timezone.make_aware(datetime.strptime(selected_date_str, "%Y-%m-%d"))
             request.session['field_id'] = field.id
             request.session['date'] = selected_date_str
 
-        if 'time' in request.POST:
+        if 'time' in request.GET:
+            print("ENTRO EN TIME")
             field_id = request.POST.get('field_id')
             time = request.POST.get('time')
             date_str = request.POST.get('date')
@@ -223,6 +225,7 @@ def change_reservation(request, reservation_id):
 
 
 def confirm_reservation(request, reservation_id):
+    print("entro aqui")
 
     reservation_history = get_object_or_404(ReservationHistory, id=reservation_id)
     reservation = get_object_or_404(Reservation, id=reservation_id)
@@ -240,11 +243,7 @@ def confirm_reservation(request, reservation_id):
     new_time = datetime.strptime(new_time_str, "%H:%M").time()
     date_to_reservate = timezone.make_aware(datetime.combine(new_date, new_time))
 
-    print(reservation.id)
-    print(reservation_history.id)
-    print(reservation_id)
-    print(reservation.dateToReservate)
-    print(date_to_reservate)
+
 
     new_reservation = Reservation(
             field=reservation.field,
@@ -303,7 +302,6 @@ def cancel_reservation(request, reservation_id):
         reservation.status = 'cancelled'
         reservation.save()
 
-        print(f'After cancellation: {reservation_history.status}')
         return redirect('user_reserves', pk=request.user.pk)
 
 

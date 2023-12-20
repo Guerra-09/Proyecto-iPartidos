@@ -11,6 +11,7 @@ from datetime import datetime
 from .utils import get_all_possible_times_for_a_day
 from django.core.mail import send_mail
 from django.core.exceptions import ValidationError
+from django import forms
 
 # This func gets time available and returns it to the view
 def index(request, field_id):
@@ -60,13 +61,7 @@ def payment(request):
 
     #form = PaymentForm(request.POST or None) 
     if request.method == 'POST' or request.session.get('field_id'):
-        form = PaymentForm(request.POST)
-        if form.is_valid():
-            print("Form valido")
-        else:
-            print('esta invalido')
-
-
+        form = PaymentForm()
 
         field_id = request.POST.get('field_id', request.session.get('field_id'))
         date_str = request.POST.get('date', request.session.get('date'))
@@ -98,12 +93,44 @@ def payment(request):
 
     else:
         form = PaymentForm()
-        return render(request, 'reservation/reservation_payment.html', {'form': form})
+
+    return render(request, 'reservation/reservation_payment.html', {'form': form})
+
 
 
 def create_reservation(request):
 
     if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get('cardName')
+            card_expiry = form.cleaned_data.get('cardExpiry')
+            month, year = map(int, card_expiry.split('/'))
+
+            if name.isnumeric():
+                form.add_error('cardName', 'El nombre del titular no puede ser un número.')
+                return render(request, 'reservation/reservation_payment.html', {'form': form})
+            
+            if len(name) > 20:
+                form.add_error('cardName', 'El nombre del titular no puede tener más de 10 caracteres.')
+                return render(request, 'reservation/reservation_payment.html', {'form': form})
+           
+            # Verificar si el mes es válido
+            if not 1 <= month <= 12:
+                form.add_error('cardExpiry', 'El mes debe estar entre 01 y 12.')
+                return render(request, 'reservation/payment_error.html')
+                #return render(request, 'reservation/reservation_payment.html', {'form': form})
+
+            # Verificar si el año es válido
+            if not 23 <= year <= 50:
+                form.add_error('cardExpiry', 'El año debe estar entre 23 y 50.')
+                #return render(request, 'reservation/payment_error.html')
+                return render(request, 'reservation/reservation_payment.html', {'form': form})
+
+            print("Form valido")
+        else:
+            print('esta invalido')
+            return render(request, 'reservation/reservation_error.html', {'form': form})
 
         field_id = request.session.get('field_id')
         date_str = request.session.get('date')
@@ -136,7 +163,7 @@ def create_reservation(request):
             time_str = time.strftime("%H:%M")  # Convertir a string
 
             if time_str not in available_times:
-                return render(request, 'reservation/reservation_error.html', {'message': 'Time is not available'})
+                return render(request, 'reservation/reservation_error.html', {'message': 'Error el horario no esta disponible'})
 
             reservation = Reservation.objects.create(
                 field=field, 
@@ -190,4 +217,12 @@ def create_reservation(request):
 
 
 def payment_success(request):
-    return render(request, 'reservation/reservation_payment_success.html')
+    user = request.user
+    last_reservation = FieldRentHistory.objects.filter(takenBy=user).order_by('-reservation__dateAtReservation').first()
+
+    context = {
+        'last_reservation': last_reservation,
+    }
+
+
+    return render(request, 'reservation/reservation_payment_success.html', context)

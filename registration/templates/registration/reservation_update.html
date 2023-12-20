@@ -36,15 +36,11 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <form method="post">
-                                    {% csrf_token %}
                                     <div class="col-12 text-center">
                                         <a href="{% url 'confirm_reservation' reservation_id=reservation_id %}?date={{ selected_date|date:'Y-m-d' }}&time={{ time }}">
-                                            <button class="btn btn-primary"></button>
+                                            <button type="submit" class="btn btn-primary"> Cambiar reserva</button>
                                         </a>
                                     </div>
-                                </form>
-                                
                             </div>
                            
                         </div>

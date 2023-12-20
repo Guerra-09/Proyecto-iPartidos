@@ -10,6 +10,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from reservation.models import Reservation
+from django.db.models import Sum, F, Count
 
 
 class FieldListView(ListView):
@@ -17,7 +18,44 @@ class FieldListView(ListView):
     template_name = 'canchas/userFields_list.html'
     context_object_name = 'fields'
 
+    # def get_queryset(self):
+    #     fields = Field.objects.filter(tenant=self.request.user.tenant)
+    #     self.total_price = 0
+    #     for field in fields:
+    #         reservations = field.reservation_set.filter(status__in=['completed', 'pending'])
+    #         field_total_price = field.price * len(reservations)  # Calcula el precio total para esta cancha
+    #         field.total_price = field_total_price  # Agrega el precio total como un atributo adicional al objeto Field
+    #         self.total_price += field_total_price  # Suma el precio total de esta cancha al precio total general
+    #     return fields
+
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['total_price'] = self.total_price
+    #     return context
+
+
+
+
     def get_queryset(self):
+        fields = Field.objects.filter(tenant=self.request.user.tenant)
+        total_price = 0
+        for field in fields:
+            reservations = field.reservation_set.filter(status__in=['completed', 'pending'])
+            print(len(reservations))  # Obtén todas las reservas para esta cancha
+            total_price = field.price * len(reservations)  # Calcula el precio total
+
+            
+            print(f'field: {field.name}, price: {field.price}, reservations: {len(reservations)}, total_price: {total_price}')
+        
+        # fields = Field.objects.filter(tenant=self.request.user.tenant)
+        
+        # context = {
+        #     'field' : fields,
+        #     'total_price': total_price
+        # }
+
+        # return context
         return Field.objects.filter(tenant=self.request.user.tenant)
 
 

@@ -7,6 +7,8 @@ from datetime import time
 
 class Field(models.Model):
 
+    
+
     GROUND_CHOICES = (
         ('Pasto sintético', 'Pasto sintético'),
         ('Pasto real', 'Pasto real'),
@@ -43,6 +45,10 @@ class Field(models.Model):
 
         return available_times
 
+
+    class Meta:
+        verbose_name = "Cancha"
+        verbose_name_plural = "Canchas"
 
     def __str__(self):
         

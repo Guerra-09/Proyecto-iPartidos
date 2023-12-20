@@ -21,13 +21,14 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
     
-            {% for field in fields|slice:"0::-1" %}
+            {% for field in fields|slice:"::-1" %}
                 <div class='container'>
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body d-flex flex-column flex-md-row justify-content-between">
                             <div style="text-align: left;">
                                 <h5 class="card-title">Nombre: {{ field.name }}</h5>
                                 <h6 class="card-subtitle mb-2 text-body-secondary">Precio: ${{ field.price }}</h6>
+                                {% comment %} <h6 class="card-subtitle mb-2 text-body-secondary">Total generado: ${{ total_price }}</h6> {% endcomment %}
 
                                 <p>Descripcion: {{ field.description }}</p>
 

@@ -1,21 +1,32 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <div class="container-md">
+    <div style="margin-top: 30px;" class="container-md">
         <h2 class="display-4">Pago realizado con exito </h2>
 
-        <p>Tu pedido</p>
+        <p style="margin-top: 30px;" class="display-6" >Tu pedido #{{ last_reservation.id }} </p>
 
-        <p>Carta con el pedido hecho</p>
+        <div class="card" style="width: 18rem; display: block;">
+            <img src="{{ last_reservation.reservation.field.fieldPhoto.url }}" class="card-img-top" alt="...">
+            <div class="card-body" style="text-align: center;">
+                <p>Club: {{ last_reservation.reservation.field.tenant.clubName }}</p>
+                <p>Cancha: {{ last_reservation.reservation.field.name }}</p>
+                <p>Fecha: {{ last_reservation.reservation.dateToReservate }}</p>
+                <p>Jugadores por lado: {{ last_reservation.reservation.field.playersPerSide }}</p>
+                <p>Precio pagado: {{ last_reservation.reservation.price }}</p>
+            </div>
+        </div>
 
 
-        <p>Se envio a tu correo esta informacion</p>
-        <p>Gracias por reservar</p>
+        <p style="margin-top: 30px;">Se envio a tu correo esta informacion <br>Gracias por reservar</p>
 
         <a href="{% url 'user_reserves' request.user.id %}">
-            <button type="button" class="btn btn-primay">Ver mis reservas</button>
+            <button type="button" class="btn btn-primary">Ver mis reservas</button>
         </a>
-        <a href="{% url 'home' %}">Ir al inicio</a>
+        <a href="{% url 'home' %}">
+            <button type="button" class="btn btn-primary">Inicio</button>
+        </a>
+        
     </div>
 
 

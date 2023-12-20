@@ -23,10 +23,14 @@
         </form>
 
 
-        <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Tus ingresos</h1>
+        <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Tus ingresos totales</h1>
 
         
-        ${{ total_price }}
+        {% if total_price == None %}
+        <p class="display-6">Aun no has generado ingresos</p>
+        {% else %}
+            <p class="display-6">${{ total_price }}</p>
+        {% endif %}
 
 
     </div>

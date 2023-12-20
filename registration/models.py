@@ -28,8 +28,8 @@ class Tenant(UsuarioProfile):
     clubClosureTime = models.TimeField('Hora de cierre', null=True, blank=True,)
 
     class Meta:
-        verbose_name = 'Tenant'
-        verbose_name_plural = 'Tenants'
+        verbose_name = 'Arrendatario'
+        verbose_name_plural = 'Arrendatarios'
 
     def get_available_times(self):
         
@@ -66,8 +66,8 @@ class Client(UsuarioProfile):
     reservationHistory = models.ManyToManyField('ReservationHistory', related_name='clients')
 
     class Meta:
-        verbose_name = 'Client'
-        verbose_name_plural = 'Clients'
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
 
 STATUS_CHOICES = [
     ('pending', 'pending'),
@@ -80,6 +80,10 @@ class FieldRentHistory(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "Historial de reserva de canchas"
+        verbose_name_plural = "Historiales de reservas de canchas"
+
 
 class ReservationHistory(models.Model):
     field = models.ForeignKey('canchas.Field', on_delete=models.CASCADE)
@@ -89,3 +93,7 @@ class ReservationHistory(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Historial de reserva personal"
+        verbose_name_plural = "Historiales de reservas de personas "

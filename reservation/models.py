@@ -9,3 +9,7 @@ class Reservation(models.Model):
     status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('confirmed', 'Confirmed'), ('completed', 'Completed'), ('cancelled', 'Cancelled')], default='pending')
     def __str__(self) -> str:
         return f'#{self.id} {self.field} - {self.status} '
+    
+    class Meta:
+        verbose_name = "Reserva"
+        verbose_name_plural = "Reservas"
