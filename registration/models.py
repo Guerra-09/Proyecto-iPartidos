@@ -32,18 +32,27 @@ class Tenant(UsuarioProfile):
         verbose_name_plural = 'Arrendatarios'
 
     def get_available_times(self):
+        if self.clubApertureTime == self.clubClosureTime:
+            return []
+
         
         times = []
         current_time = self.clubApertureTime
-        while current_time != self.clubClosureTime:
+        while current_time < self.clubClosureTime:
             times.append(current_time)
             current_time = (datetime.combine(date.today(), current_time) + timedelta(hours=1)).time()
             if current_time > time(23, 59):  # Si la hora actual supera la medianoche, resetéala a 00:00:00
                 current_time = time()
+
+        print(current_time)
+        print(times)
         #
         return times
     
+       
+    
     def get_available_times_for_date(self, selected_date):
+        print("enta en available times for date")
         if isinstance(selected_date, str):
             selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
 

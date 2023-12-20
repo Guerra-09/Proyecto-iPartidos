@@ -2,14 +2,14 @@
 
 {% block content %}
 
-    <div class='container-sm'>
+    <div class='container-md'>
         <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Crea una nueva cancha</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
 
             <a href="{% url 'club_settings' %}">Back to list</a>
-            <button type='submit'> Crear </button>
+            <button style="margin-left: 20px;" class="btn btn-primary" type='submit'> Crear </button>
         </form>
     </div>
 

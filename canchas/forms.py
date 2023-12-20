@@ -16,7 +16,10 @@ class FieldForm(forms.ModelForm):
             'playersPerSide' : forms.NumberInput(attrs={'class': 'form-control'}),
             'fieldPhoto' : forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+        labels = {
+            'groundType': 'Tipo de suelo',
+        }
 
     def __init__(self, *args, **kwargs):
         super(FieldForm, self).__init__(*args, **kwargs)
-        self.fields['groundType'] = forms.ChoiceField(choices=GROUND_CHOICES)
+        self.fields['groundType'] = forms.ChoiceField(choices=GROUND_CHOICES, label="Tipo de suelo")

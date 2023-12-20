@@ -93,7 +93,7 @@ def password_recovery(request):
                 user.set_password(new_password)
                 user.save()
 
-                print("usuario con nueva contrasena")
+                print("usuario con nueva contraseña")
 
                 message = f'Hola, esta es tu nueva clave provisioria: {new_password} \nAsegurate de cambiarla desde Editar perfil.' 
                 email = request.POST.get('email')
@@ -151,6 +151,7 @@ def user_reserves(request, pk):
             'price': field_rent.reservation.price,
             'date': field_rent.reservation.dateToReservate,
             'id': reservation_ids[i],
+            'club' : field_rent.reservation.field.tenant.clubName,
             'reservation_history': reservation
         })
 

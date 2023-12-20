@@ -15,6 +15,7 @@ from django import forms
 
 # This func gets time available and returns it to the view
 def index(request, field_id):
+    print("Entra al index")
     field = Field.objects.get(id=field_id)  
     tenant = field.tenant  
     today = timezone.now().date()
@@ -46,13 +47,14 @@ def index(request, field_id):
     reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
     reserved_times = [t.strftime('%H:%M') for t in reserved_times]
 
+    print("FLAG")
+    
     all_times = get_all_possible_times_for_a_day(tenant)
     print(f"All times: {all_times}")
 
     available_times = [t for t in all_times if t not in reserved_times]
 
     print(f"Available times: {available_times}")
-
 
     return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
 
@@ -185,17 +187,18 @@ def create_reservation(request):
             field_rent_history = FieldRentHistory.objects.create(takenBy=client, reservation=reservation)
 
 
-            message = f"""
-                Hola {request.user.username},
+            message = f"""Hola {request.user.username},
 
-                Tu reserva ha sido creada con éxito. Aquí están los detalles de tu reserva:
+Tu reserva ha sido creada con éxito. Aquí están los detalles de tu reserva:
 
-                Código de reserva: {reservation.id}
-                Fecha y hora de la reserva: {reservation.dateToReservate.strftime('%d-%m-%Y %H:%M')}hrs
-                Nombre de la cancha: {field.name}
-                Precio pagado: {reservation.price}
+Código de reserva: {reservation.id}
 
-                Gracias por tu reserva.
+Fecha y hora de la reserva: {reservation.dateToReservate.strftime('%d-%m-%Y %H:%M')}hrs
+Club: {reservation.field.tenant.clubName}
+Nombre de la cancha: {field.name}
+Precio pagado: {reservation.price}
+
+Gracias por tu reserva.
             """
 
             send_mail(

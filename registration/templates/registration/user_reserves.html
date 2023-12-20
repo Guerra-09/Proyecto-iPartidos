@@ -29,8 +29,9 @@
                     <div class="card-body">
                         <h5 class="card-title">
                         {{ reservation.name }}</h5>
+                        <p>Club: {{ reservation.club }}</p>
                         <p>Precio: ${{ reservation.price }}</p>
-                        Fecha: {{ reservation.date }}
+                        Fecha: {{ reservation.date }} hrs
                         {% if reservation.reservation_history.status == 'pending' %}
                             <div class="d-flex justify-content-start" style="margin-top: 15px;">
                                 <form class="mr-2" method="post">

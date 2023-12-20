@@ -62,7 +62,7 @@ class FieldListView(ListView):
 class FieldCreateView(CreateView):
     form_class = FieldForm 
     template_name = 'canchas/create_field.html'
-    success_url = reverse_lazy('all')
+    success_url = reverse_lazy('canchas_list')
 
     def form_valid(self, form):
         print("User:", self.request.user)

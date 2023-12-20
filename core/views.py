@@ -27,8 +27,9 @@ def help(request):
             message = form.cleaned_data['message']
             email = form.cleaned_data['email'] if not request.user.is_authenticated else request.user.email
             account_type = 'Client' if request.user.is_authenticated and request.user.role == 'client' else 'Tenant'
-            message += f"\n\nEmail: {email}\nAccount Type: {account_type}"
+            #message += f"\n\nEmail: {email}\nAccount Type: {account_type}"
 
+            # El sender deberia ser el de .env
             send_mail(
                 title,
                 message,
