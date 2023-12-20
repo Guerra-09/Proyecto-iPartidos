@@ -29,6 +29,8 @@ from canchas.models import Field
 from django.db import transaction
 from datetime import datetime
 from reservation.utils import get_all_possible_times_for_a_day
+from django.utils import timezone
+from django.http import HttpResponse
 
 
 
@@ -124,11 +126,15 @@ def user_reserves(request, pk):
     field_rent_history = FieldRentHistory.objects.filter(takenBy=user.id).order_by('-created_at')
     reservation_history = ReservationHistory.objects.filter(client=request.user).order_by('-created_at')
     
+
+
     reservation_ids = []
     context = []
     
     for field_rent in field_rent_history:
         reservation_ids.append(field_rent.reservation.id)
+
+
 
     reservation_ids = list(reversed(reservation_ids))
 
@@ -187,61 +193,108 @@ def change_reservation(request, reservation_id):
             time = request.POST.get('time')
             date_str = request.POST.get('date')
             date = timezone.make_aware(datetime.strptime(date_str, "%Y-%m-%d"))
-
-
-        reservations = FieldRentHistory.objects.filter(
-            reservation__field=field, 
-            reservation__dateToReservate__date=selected_date, 
-            reservation__status__in=['pending'] 
-        )
-
-        reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
-        reserved_times = [t.strftime('%H:%M') for t in reserved_times]
-        all_times = get_all_possible_times_for_a_day(tenant)
-        available_times = [t for t in all_times if t not in reserved_times]
-
-        # Eliminar la reserva previa con el mismo ID
-        previous_reservation = get_object_or_404(Reservation, id=reservation_id)
-        previous_reservation.delete()
+            return redirect('confirm_reservation', reservation_id=reservation_id)
+        
+        
+        # return render(request, 'registration/change_reservation.html', {
+        #     'reservation': reservation,
+        #     'field': field,
+        #     'tenant': tenant,
+        #     'selected_date': selected_date,
+        #     'available_times': available_times,
+        # })
+        
 
 
 
+    reservations = FieldRentHistory.objects.filter(
+        reservation__field=field, 
+        reservation__dateToReservate__date=selected_date, 
+        reservation__status__in=['pending'] 
+    )
 
-    return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
+    reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
+    reserved_times = [t.strftime('%H:%M') for t in reserved_times]
+    all_times = get_all_possible_times_for_a_day(tenant)
+    available_times = [t for t in all_times if t not in reserved_times]
+
+    return render(request, 'registration/reservation_update.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date,  'reservation_id' : reservation_id})
+
 
 
 def confirm_reservation(request, reservation_id):
-    reservation = get_object_or_404(ReservationHistory, id=reservation_id)
 
-    print("FLAGGG")
+    reservation_history = get_object_or_404(ReservationHistory, id=reservation_id)
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    
+    
+    date_str = request.POST.get('date')
+    if date_str:
+        date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+    else:
+        HttpResponse('puxa')
+
+    new_date_str = request.GET.get('date')
+    new_time_str = request.GET.get('time')
+    new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
+    new_time = datetime.strptime(new_time_str, "%H:%M").time()
+    date_to_reservate = timezone.make_aware(datetime.combine(new_date, new_time))
+
+    print(reservation.id)
+    print(reservation_history.id)
+    print(reservation_id)
+    print(reservation.dateToReservate)
+    print(date_to_reservate)
+
+    new_reservation = Reservation(
+            field=reservation.field,
+            dateAtReservation=timezone.now(),
+            dateToReservate=date_to_reservate,
+            price=reservation.price,
+            status='pending'
+        )
+
+    new_reservation_history = ReservationHistory(
+        client=reservation_history.client,
+        field=reservation_history.field,
+        dateAtReservation=timezone.now(),
+        dateToReservate=date_to_reservate,
+        price=reservation_history.price,
+        status='pending'
+    )
+
     if request.method == 'POST':
+
+        reservation_history.status = 'cancelled'
         reservation.status = 'cancelled'
+        reservation_history.save()
         reservation.save()
-        messages.success(request, 'Se cambió la reserva.')
-        
-        new_reservation = ReservationHistory()
-        new_reservation.field = reservation.field
-        new_reservation.client = request.user.client
-        new_reservation.status = 'pending'
-        print(new_reservation.status)
-        new_date_str = request.POST.get('date')
-        new_time_str = request.POST.get('time')
-        new_date = timezone.make_aware(datetime.strptime(new_date_str, "%Y-%m-%d"))
-        new_time = datetime.strptime(new_time_str, "%H:%M").time()
-        new_reservation.dateToReservate = datetime.combine(new_date, new_time)
-        new_reservation.dateAtReservation = timezone.now()  
-        new_reservation.price = reservation.price
+
+    
+
         new_reservation.save()
+        new_reservation_history.save()
+
+        new_field_rent_history = FieldRentHistory(
+            takenBy=reservation_history.client,
+            reservation=new_reservation,
+        )
+
+        new_field_rent_history.save()
+
+
+        return redirect('user_reserves', pk=reservation_history.client.id)
         
-    return redirect('user_reserves', pk=request.user.pk)
-    
-    
+    return render(request, 'registration/reservation_update_confirmation.html', {'reservation_id': reservation_id, 'previous_reserve' : reservation , 'new_reserve' : new_reservation})
+
+
+
+
 @login_required
 def cancel_reservation(request, reservation_id):
 
     reservation_history = get_object_or_404(ReservationHistory, id=reservation_id)
-    # El - 1 es necesario ... y muy troll
-    reservation = get_object_or_404(Reservation, id=reservation_id - 1)
+    reservation = get_object_or_404(Reservation, id=reservation_id)
 
     if request.method == 'POST':
         reservation_history.status = 'cancelled'

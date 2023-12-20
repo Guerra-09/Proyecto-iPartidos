@@ -1,0 +1,64 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+    <div class="container-md">
+
+        <h1 style="margin-bottom: 30px; margin-bottom: 30px;" class="display-5">¿Deseas realizar el cambio?</h1>
+        <form method="POST">
+            {% csrf_token %}
+
+
+            <div class="card text-center" style="margin-top: 30xp;">
+                <div class="card-header">
+                    <h1 class='display-6'>Actual reserva</h1>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title"> </h5>
+                    <p>Cancha: {{ previous_reserve.field.name}}</p>
+                    <p><b>Horario: {{ previous_reserve.dateToReservate }} hrs</b></p> 
+                    
+                </div>
+                <div class="card-footer text-muted">
+                    <p>Club: {{ previous_reserve.field.tenant.clubName }}</p>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-bottom: 30px;">
+                <i style="color: #163E56;" class="display-1 bi bi-chevron-double-down"></i>
+            </div>
+
+            <div class="card text-center" style="margin-top: 30xp; margin-bottom: 60px;">
+                <div class="card-header">
+                    <h1 class='display-6'>Nueva reserva</h1>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title"> </h5>
+                    <p>Cancha: {{ new_reserve.field.name}}</p>
+                    <p><b>Horario: {{ new_reserve.dateToReservate }} hrs</b></p> 
+                    
+                </div>
+                <div class="card-footer text-muted">
+                    <p>Club: {{ new_reserve.field.tenant.clubName }}</p>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'user_reserves' request.user.id %}">
+                        <button class="btn btn-danger mx-auto d-block w-100"> Cancelar </button>
+                    </a>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary mx-auto d-block w-100"> Aceptar </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    {% include 'core/footer.html' %}
+
+{% endblock %}

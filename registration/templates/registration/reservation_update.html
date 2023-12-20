@@ -6,27 +6,28 @@
         <h1 class="display-4"> {{ field.name }} </h1>
 
 
+
         <h4>Escoger fecha</h4>
-        <form method="post" action="{% url 'index' field.id %}">
-        {% csrf_token %}
+        <form method="post">
+            {% csrf_token %}
             <label for="date">Fecha:</label>
             <input type="date" id="datePicker" name="date" value="{{ selected_date|date:"Y-m-d" }}">
             <input type="hidden" name="field_id" value="{{ field.id }}">
             <input type="submit" value="Seleccionar fecha">
         </form>
 
-        <div class="row">
-            {% for time in available_times %}
-                <div class='col-md-4'>
-                    <div class='card' style="margin: 20px auto; max-width: 300px; height: 130px;">
-                        <div class="row">
-                            <div class="col-12 text-center">
-                                <h3>{{ time }} hrs</h3>
-                                <p>Precio: ${{ field.price }}</p>
+            <div class="row">
+                {% for time in available_times %}
+                    <div class='col-md-4'>
+                        <div class='card' style="margin: 20px auto; max-width: 300px; height: 130px;">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h3>{{ time }} hrs</h3>
+                                    <p>Precio: ${{ field.price }}</p>
+                                </div>
                             </div>
-                        </div>
-                        <form method="post" action="{% url 'index' field.id %}">
-                            {% csrf_token %}
+                            
+                               
                             <div class="row">
                                 <div class="col-12">
                                     <input type="hidden" name="date" value="{{ selected_date|date:"Y-m-d" }}">
@@ -35,15 +36,22 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-12 text-center">
-                                    <input type="submit" class="btn btn-primary" value="Reservar horario">
-                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="col-12 text-center">
+                                        <a href="{% url 'confirm_reservation' reservation_id=reservation_id %}?date={{ selected_date|date:'Y-m-d' }}&time={{ time }}">
+                                            <button class="btn btn-primary"></button>
+                                        </a>
+                                    </div>
+                                </form>
+                                
                             </div>
-                        </form>
+                           
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+      
     </div>
 
 
@@ -51,3 +59,4 @@
 
 
 {% endblock %}
+

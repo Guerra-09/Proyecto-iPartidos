@@ -147,12 +147,12 @@ def create_reservation(request):
             )
 
             ReservationHistory.objects.create(
-            field=reservation.field,
-            dateAtReservation=reservation.dateAtReservation,
-            dateToReservate=reservation.dateToReservate,
-            price=reservation.price,
-            status=reservation.status,
-            client=request.user.client  # Assuming the User model has a 'client' field
+                field=reservation.field,
+                dateAtReservation=reservation.dateAtReservation,
+                dateToReservate=reservation.dateToReservate,
+                price=reservation.price,
+                status=reservation.status,
+                client=request.user.client  
             )
 
             field_rent_history = FieldRentHistory.objects.create(takenBy=client, reservation=reservation)

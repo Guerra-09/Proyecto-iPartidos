@@ -88,5 +88,4 @@ class ReservationHistory(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
-    # reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,8 +1,20 @@
 {% extends 'core/base.html'%}
 
 {% block content %}
-<body>
-    <h1>Error</h1>
-    <p>{{ message }}</p>
-</body>
+
+    <div class="container-md">
+
+        <h1 class="display-4">Error</h1>
+
+        <p>Lo mas probable es que alguien reservo antes que tu, lo sentimos</p>
+
+            <a href="{% url 'home' %}">
+                <Button class="btn btn-danger"> Volver </Button>
+            </a>
+
+
+    </div>  
+    {{ mesage }}
+
+    
 {% endblock %}
