@@ -88,7 +88,6 @@ def password_recovery(request):
                 user = None
 
             if user is not None:
-                # Generar una nueva contraseña para el usuario
                 new_password = User.objects.make_random_password()
                 user.set_password(new_password)
                 user.save()
@@ -99,7 +98,7 @@ def password_recovery(request):
                 email = request.POST.get('email')
 
                 send_mail(
-                    'Contact form', #title
+                    'Clave provisoria', 
                     message,
                     'settings.EMAIL_HOST_USER',
                     [email],
@@ -164,13 +163,6 @@ def user_reserves(request, pk):
     return render(request, 'registration/user_reserves.html', {'context': context})
 
 
-
-
-
-
-
-
-# Cambio de reserva se hace aqui y se valida en otro lado !!!!!!!!!!!!!!!
 
 def change_reservation(request, reservation_id):
 
@@ -312,7 +304,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Actualiza la sesión para que no sea necesario volver a iniciar sesión
+            update_session_auth_hash(request, user)  
             return redirect('home')
     else:
         form = PasswordChangeForm(request.user)

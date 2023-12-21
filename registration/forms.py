@@ -108,7 +108,7 @@ class CustomUserChangeForm(UserChangeForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = user.email  # Set username to be the same as email
+        user.username = user.email  
         if commit:
             user.save()
         return user

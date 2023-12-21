@@ -10,7 +10,7 @@ class PaymentForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control', 
             'data-inputmask': "'mask': '99/99'",
-            'pattern': '(0[1-9]|1[0-2])\/\d{2}'  # Acepta cualquier mes del 01 al 12, seguido de / y cualquier año de dos dígitos
+            'pattern': '(0[1-9]|1[0-2])\/\d{2}' 
         }),
     )
     cardCVV = forms.CharField(label='CVV', max_length=3, widget=forms.TextInput(attrs={'class': 'form-control', 'pattern': '\d{3}'}))

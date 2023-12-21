@@ -10,8 +10,7 @@ from registration.models import FieldRentHistory
 from datetime import datetime
 from .utils import get_all_possible_times_for_a_day
 from django.core.mail import send_mail
-from django.core.exceptions import ValidationError
-from django import forms
+
 
 # This func gets time available and returns it to the view
 def index(request, field_id):
@@ -22,6 +21,10 @@ def index(request, field_id):
     selected_date = today
 
     if request.method == 'POST':
+
+        print("FLAG")
+        print(tenant.clubApertureTime)
+        print(tenant.clubClosureTime)
 
         if 'date' in request.POST:
             # Cambiar la fecha
@@ -47,7 +50,6 @@ def index(request, field_id):
     reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
     reserved_times = [t.strftime('%H:%M') for t in reserved_times]
 
-    print("FLAG")
     
     all_times = get_all_possible_times_for_a_day(tenant)
     print(f"All times: {all_times}")
@@ -117,7 +119,7 @@ def create_reservation(request):
                 form.add_error('cardName', 'El nombre del titular no puede tener más de 10 caracteres.')
                 return render(request, 'reservation/reservation_payment.html', {'form': form})
            
-            # Verificar si el mes es válido
+            
             if not 1 <= month <= 12:
                 form.add_error('cardExpiry', 'El mes debe estar entre 01 y 12.')
                 return render(request, 'reservation/payment_error.html')
@@ -202,7 +204,7 @@ Gracias por tu reserva.
             """
 
             send_mail(
-                'Reserva creada',  # Asunto
+                'Reserva creada',  
                 message,
                 'djangoa353@gmail.com',  # Change to env environment variable
                 [request.user.email], 

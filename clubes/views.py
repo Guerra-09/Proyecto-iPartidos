@@ -25,7 +25,7 @@ class ClubUpdateView(UpdateView):
         total_price = reservations.aggregate(total=Sum('field__price'))['total']
         context['total_price'] = total_price
 
-        # Set the instance of the form
+
         form = self.get_form()
         form.fields['clubPhoto'].initial = self.object.clubPhoto
         context['form'] = form
@@ -46,6 +46,8 @@ class ClubUpdateView(UpdateView):
             return self.request.user.tenant
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
+        
+
 #   View for listing club field's
 class ClubsListView(ListView):
     model = Tenant
@@ -58,11 +60,11 @@ class ClubsListView(ListView):
     
 
 
-#   
+ 
 def field_detail(request):
     return render(request, 'clubes/club_clientDetailView.html')
 
-#   
+
 @method_decorator(login_required, name='dispatch') 
 class ClubClientDetailView(DetailView):
     model = Tenant

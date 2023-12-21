@@ -18,7 +18,7 @@
             <div class="col-md-4 d-flex align-items-stretch">
                 <div class="card" style="width: 100%; min-height: 400px; display: flex; flex-direction: column;">
                     {% if club.clubPhoto %}
-                        <img src="{{ club.clubPhoto.url }}" class="card-img-top" alt="...">
+                        <img style="object-fit: cover; max-height: 350px;" src="{{ club.clubPhoto.url }}" class="card-img-top" alt="...">
                     {% else %}
                         <img src="{% static 'core/img/noPhoto.jpg' %}" class="card-img-top" alt="...">
                     {% endif %}

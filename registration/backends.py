@@ -7,18 +7,16 @@ class EmailBackend(ModelBackend):
         try:
             user = UserModel.objects.get(email=username)
         except UserModel.DoesNotExist:
-            print("User does not exist")  # Print statement for debugging
+            print("User does not exist") 
             return None
 
         if user.check_password(password):
-            print("Password is correct")  # Print statement for debugging
-            # Check if the user is a Tenant
+            print("Password is correct")  
             if hasattr(user, 'tenant'):
-                print("Tenant found")  # Print statement for debugging
+                print("Tenant found") 
             return user
         else:
-            print("Password is incorrect")  # Print statement for debugging
-
+            print("Password is incorrect") 
     def get_user(self, user_id):
         UserModel = get_user_model()
         try:
@@ -30,5 +28,5 @@ class EmailBackend(ModelBackend):
             return user
 
         except UserModel.DoesNotExist:
-            print("User does not exist")  # Print statement for debugging
+            print("User does not exist")  
             return None

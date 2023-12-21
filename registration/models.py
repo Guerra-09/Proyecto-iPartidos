@@ -27,6 +27,7 @@ class Tenant(UsuarioProfile):
     clubApertureTime = models.TimeField('Hora de apertura', null=True, blank=True,)
     clubClosureTime = models.TimeField('Hora de cierre', null=True, blank=True,)
 
+    # This is like a verbose _name for admin panel
     class Meta:
         verbose_name = 'Arrendatario'
         verbose_name_plural = 'Arrendatarios'
@@ -34,17 +35,22 @@ class Tenant(UsuarioProfile):
     def get_available_times(self):
         if self.clubApertureTime == self.clubClosureTime:
             return []
-
-        
+            
         times = []
         current_time = self.clubApertureTime
+
+        if closure_time < current_time:
+            closure_time = datetime.combine(date.today() + timedelta(days=1), closure_time).time()
+
+
+        print(current_time)
         while current_time < self.clubClosureTime:
             times.append(current_time)
             current_time = (datetime.combine(date.today(), current_time) + timedelta(hours=1)).time()
-            if current_time > time(23, 59):  # Si la hora actual supera la medianoche, resetéala a 00:00:00
+            if current_time > time(23, 59): 
                 current_time = time()
 
-        print(current_time)
+
         print(times)
         #
         return times
@@ -69,6 +75,8 @@ class Tenant(UsuarioProfile):
         print(f"MODEL: Available times: {available_times}")
 
         return available_times
+
+
 
 class Client(UsuarioProfile):
     fieldsRented = models.ManyToManyField('FieldRentHistory', related_name='clients')

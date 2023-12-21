@@ -42,8 +42,8 @@ class FieldListView(ListView):
         total_price = 0
         for field in fields:
             reservations = field.reservation_set.filter(status__in=['completed', 'pending'])
-            print(len(reservations))  # Obtén todas las reservas para esta cancha
-            total_price = field.price * len(reservations)  # Calcula el precio total
+            print(len(reservations))  
+            total_price = field.price * len(reservations) 
 
             
             print(f'field: {field.name}, price: {field.price}, reservations: {len(reservations)}, total_price: {total_price}')
@@ -82,12 +82,9 @@ class FieldUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_object(self, queryset=None):
-        """Obtener el objeto Field del Tenant actualmente autenticado."""
         if queryset is None:
             queryset = self.get_queryset()
-        # Get the 'pk' from the URL
         pk = self.kwargs.get('pk')
-        # Get the object with the given 'pk'
         obj = get_object_or_404(queryset, pk=pk)
         return obj
 

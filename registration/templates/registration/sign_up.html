@@ -4,7 +4,7 @@
     <div class="container-md">
         <h2 class="display-4">Regístrate</h2>
         <div>
-            <form id="signup-form" method="post" class="col-md-8">  <!-- Cambia esta línea -->
+            <form id="signup-form" method="post" class="col-md-8">  
                 {% csrf_token %}
                 
                 {% for field in form %}
