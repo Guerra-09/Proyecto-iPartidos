@@ -9,6 +9,8 @@ class ClubForm(forms.ModelForm):
 
     clubApertureTime = forms.ChoiceField(choices=HOUR_CHOICES, label='Hora de apertura del club')
     clubClosureTime = forms.ChoiceField(choices=HOUR_CHOICES, label='Hora de cierre del club')
+    
+
 
     class Meta:
         model = Tenant
@@ -16,7 +18,7 @@ class ClubForm(forms.ModelForm):
         widgets = {
             'clubName': forms.TextInput(attrs={'class': 'form-control'}),
             'clubDescription': forms.TextInput(attrs={'class': 'form-control'}),
-            'clubPhoto': forms.FileInput(attrs={'class': 'form-control'}),
+            'clubPhoto': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'clubAddress': forms.TextInput(attrs={'class': 'form-control'}),
         }
         labels = {

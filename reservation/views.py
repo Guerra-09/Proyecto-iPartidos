@@ -10,15 +10,18 @@ from registration.models import FieldRentHistory
 from datetime import datetime
 from .utils import get_all_possible_times_for_a_day
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 
 # This func gets time available and returns it to the view
+@login_required
 def index(request, field_id):
     print("Entra al index")
     field = Field.objects.get(id=field_id)  
     tenant = field.tenant  
     today = timezone.now().date()
     selected_date = today
+    now = timezone.now()
 
     if request.method == 'POST':
 
@@ -46,21 +49,26 @@ def index(request, field_id):
         reservation__dateToReservate__date=selected_date, 
         reservation__status__in=['pending'] 
     )
-
+    all_times = get_all_possible_times_for_a_day(tenant)
     reserved_times = reservations.values_list('reservation__dateToReservate__time', flat=True)
     reserved_times = [t.strftime('%H:%M') for t in reserved_times]
-
+    available_times = [t for t in all_times if t not in reserved_times]
     
-    all_times = get_all_possible_times_for_a_day(tenant)
     print(f"All times: {all_times}")
 
-    available_times = [t for t in all_times if t not in reserved_times]
+    # if selected_date == now.date():
+    #     current_time = now.time()
+    #     available_times = [t for t in available_times if datetime.strptime(t, '%H:%M').time() > current_time]
+
+    if selected_date == now.date():
+        current_time = now.time()
+        available_times = [t for t in available_times if datetime.strptime(t, '%H:%M').time() >= current_time]
 
     print(f"Available times: {available_times}")
 
-    return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date})
+    return render(request, 'reservation/reservation_menu.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date, 'today': today})
 
-
+@login_required
 def payment(request):
 
     #form = PaymentForm(request.POST or None) 
@@ -101,7 +109,7 @@ def payment(request):
     return render(request, 'reservation/reservation_payment.html', {'form': form})
 
 
-
+@login_required
 def create_reservation(request):
 
     if request.method == 'POST':
@@ -220,7 +228,7 @@ Gracias por tu reserva.
         form = PaymentForm()
         return render(request, 'reservation/payment')
 
-
+@login_required
 def payment_success(request):
     user = request.user
     last_reservation = FieldRentHistory.objects.filter(takenBy=user).order_by('-reservation__dateAtReservation').first()

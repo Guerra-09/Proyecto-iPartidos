@@ -99,7 +99,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-cl'
 
-TIME_ZONE = 'UTC'
+#TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -139,6 +140,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER') 
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-EMAIL_USE_TLS = True 
-EMAIL_USE_SSL = False
+# For safety
+EMAIL_USE_TLS = True # Transport Layer Security, protocol for privacy
+EMAIL_USE_SSL = False # Secure Sockets Layer, protocol encrypted link
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') 

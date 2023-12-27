@@ -18,25 +18,6 @@ class FieldListView(ListView):
     template_name = 'canchas/userFields_list.html'
     context_object_name = 'fields'
 
-    # def get_queryset(self):
-    #     fields = Field.objects.filter(tenant=self.request.user.tenant)
-    #     self.total_price = 0
-    #     for field in fields:
-    #         reservations = field.reservation_set.filter(status__in=['completed', 'pending'])
-    #         field_total_price = field.price * len(reservations)  # Calcula el precio total para esta cancha
-    #         field.total_price = field_total_price  # Agrega el precio total como un atributo adicional al objeto Field
-    #         self.total_price += field_total_price  # Suma el precio total de esta cancha al precio total general
-    #     return fields
-
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['total_price'] = self.total_price
-    #     return context
-
-
-
-
     def get_queryset(self):
         fields = Field.objects.filter(tenant=self.request.user.tenant)
         total_price = 0
@@ -48,15 +29,8 @@ class FieldListView(ListView):
             
             print(f'field: {field.name}, price: {field.price}, reservations: {len(reservations)}, total_price: {total_price}')
         
-        # fields = Field.objects.filter(tenant=self.request.user.tenant)
-        
-        # context = {
-        #     'field' : fields,
-        #     'total_price': total_price
-        # }
-
-        # return context
         return Field.objects.filter(tenant=self.request.user.tenant)
+
 
 
 class FieldCreateView(CreateView):
@@ -87,20 +61,25 @@ class FieldUpdateView(LoginRequiredMixin, UpdateView):
         pk = self.kwargs.get('pk')
         obj = get_object_or_404(queryset, pk=pk)
         return obj
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_editing'] = True
+        return context
 
-
+@login_required
 class FieldDetailView(DetailView):
     model = Field
     template_name = 'canchas/fields_detail.html'
     context_object_name = 'cancha'
 
-
+@login_required
 def clients_reservations(request):
     rent_histories = FieldRentHistory.objects.filter(reservation__field__tenant=request.user.tenant).order_by('-id')
     print(rent_histories)
     return render(request, 'canchas/clients_reservations.html', {'reservations': rent_histories})
 
-
+@login_required
 def delete_client_reservation(request, reservation_id):
     rent_history = get_object_or_404(FieldRentHistory, reservation_id=reservation_id)
     reservation = get_object_or_404(Reservation, id=reservation_id)

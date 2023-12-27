@@ -10,8 +10,10 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.db.models import Sum
+from datetime import datetime
 
 #   View for update club parametters
+
 class ClubUpdateView(UpdateView):
     model = Tenant
     template_name = 'clubes/club_settings.html'
@@ -25,9 +27,10 @@ class ClubUpdateView(UpdateView):
         total_price = reservations.aggregate(total=Sum('field__price'))['total']
         context['total_price'] = total_price
 
-
         form = self.get_form()
-        form.fields['clubPhoto'].initial = self.object.clubPhoto
+        form.fields['clubApertureTime'].initial = self.object.clubApertureTime
+        form.fields['clubClosureTime'].initial = self.object.clubClosureTime.strftime('%H:%M')
+        
         context['form'] = form
 
         return context
@@ -46,6 +49,8 @@ class ClubUpdateView(UpdateView):
             return self.request.user.tenant
         else:
             raise ValueError("Logged in user is not a Tenant bruh")
+        
+
         
 
 #   View for listing club field's

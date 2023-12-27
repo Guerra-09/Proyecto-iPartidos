@@ -1,32 +1,22 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.views import LoginView
-from django.views.generic.detail import DetailView
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-from .models import Tenant, Client, FieldRentHistory, ReservationHistory
+from .models import FieldRentHistory, ReservationHistory
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomUserChangeForm, PasswordRecoveryForm
-from django.contrib.auth.forms import AuthenticationForm
-from django import forms 
-from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from decimal import Decimal, ROUND_DOWN
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Reservation
-from canchas.models import Field
-from django.db import transaction
 from datetime import datetime
 from reservation.utils import get_all_possible_times_for_a_day
 from django.utils import timezone
@@ -55,7 +45,7 @@ class SignUpView(CreateView):
         return super().form_valid(form)
         
        
-# User Profile View    
+# User Profile View
 class ProfileUpdateView(UpdateView):
     model = get_user_model()
     template_name = 'registration/profile.html'
@@ -67,6 +57,7 @@ class ProfileUpdateView(UpdateView):
     
 
 # User Profile Login view
+
 class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
     template_name = 'registration/login.html'
@@ -120,6 +111,7 @@ def password_recovery(request):
 
 
 # User History View
+@login_required
 def user_reserves(request, pk):
     user = request.user 
     field_rent_history = FieldRentHistory.objects.filter(takenBy=user.id).order_by('-created_at')
@@ -163,7 +155,7 @@ def user_reserves(request, pk):
     return render(request, 'registration/user_reserves.html', {'context': context})
 
 
-
+@login_required
 def change_reservation(request, reservation_id):
 
     reservation = get_object_or_404(ReservationHistory, id=reservation_id)
@@ -190,15 +182,6 @@ def change_reservation(request, reservation_id):
             date = timezone.make_aware(datetime.strptime(date_str, "%Y-%m-%d"))
             return redirect('confirm_reservation', reservation_id=reservation_id)
         
-        
-        # return render(request, 'registration/change_reservation.html', {
-        #     'reservation': reservation,
-        #     'field': field,
-        #     'tenant': tenant,
-        #     'selected_date': selected_date,
-        #     'available_times': available_times,
-        # })
-        
 
 
 
@@ -216,7 +199,7 @@ def change_reservation(request, reservation_id):
     return render(request, 'registration/reservation_update.html', {'field': field, 'available_times': available_times, 'selected_date': selected_date,  'reservation_id' : reservation_id})
 
 
-
+@login_required
 def confirm_reservation(request, reservation_id):
     print("entro aqui")
 

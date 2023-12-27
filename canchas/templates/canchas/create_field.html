@@ -3,13 +3,27 @@
 {% block content %}
 
     <div class='container-md'>
-        <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Crea una nueva cancha</h1>
+
+        {% if is_editing %}
+            <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Modificar cancha</h1>
+        {% else %}
+            <h1 class="display-4" style="margin-top: 30px; margin-bottom: 30px;">Crea una nueva cancha</h1>
+        {% endif %}
+
+
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
+            
 
-            <a href="{% url 'club_settings' %}">Back to list</a>
-            <button style="margin-left: 20px;" class="btn btn-primary" type='submit'> Crear </button>
+            <a href="{% url 'canchas_list' %}">Volver</a>
+
+            {% if is_editing %}
+                <button style="margin-left: 20px;" class="btn btn-primary" type='submit'> Guardar </button>
+            {% else %}
+                <button style="margin-left: 20px;" class="btn btn-primary" type='submit'> Crear </button>
+
+            {% endif %}
         </form>
     </div>
 

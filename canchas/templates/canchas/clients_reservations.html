@@ -30,7 +30,14 @@
                                 <h6 class="card-subtitle mb-2 text-body-secondary" >Cancha: {{ reservation.reservation.field.name }}</h6>
                                 <h5>ID: #{{ reservation.id }}</h5>
                                 
-                                <p>Estado: {{ reservation.reservation.status }}</p>
+                                {% if reservation.reservation.status == 'pending' %}
+                                    <p>Estado: Pendiente </p>
+                                {% elif reservation.reservation.status == 'cancelled' %}
+                                    <p>Estado: Cancelada </p>
+                                {% else %}
+                                    <p>Estado: Completada </p>
+                                {% endif %}
+
                                 <p>Fecha: {{ reservation.reservation.dateToReservate }} hrs</p>
                                 <p>Precio: {{ reservation.reservation.field.price }}</p>
                                 <p>Arrendado por: {{ reservation.takenBy }}</p>

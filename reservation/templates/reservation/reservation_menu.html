@@ -10,7 +10,7 @@
         <form method="post" action="{% url 'index' field.id %}">
         {% csrf_token %}
             <label for="date">Fecha:</label>
-            <input type="date" id="datePicker" name="date" value="{{ selected_date|date:"Y-m-d" }}">
+            <input type="date" id="datePicker" name="date" min="{{ today|date:'Y-m-d' }}" value="{{ selected_date|date:'Y-m-d' }}">
             <input type="hidden" name="field_id" value="{{ field.id }}">
             <input type="submit" value="Seleccionar fecha">
         </form>
@@ -41,6 +41,10 @@
                             </div>
                         </form>
                     </div>
+                </div>
+            {% empty %}
+                <div class='col-md-12 d-flex justify-content-center align-items-center' style="height: 33vh;">
+                    <p class="display-6">No hay horarios disponibles.</p>
                 </div>
             {% endfor %}
         </div>

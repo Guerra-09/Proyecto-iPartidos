@@ -27,8 +27,7 @@
                             <h5 class="card-title">{{ club.clubName }}</h5>
                             <p>{{ club.clubDescription }}</p>
                             <div class="card-text">
-                                <p><img src="{% static 'core/img/clock.svg' %}" alt="">
-                                    Abierto de {{ club.clubApertureTime|date:"H:i" }} a {{ club.clubClosureTime|date:"H:i" }}</p>
+                                    Abierto de {{ club.clubApertureTime|date:"H:i" }} a {{ club.clubClosureTime|date:"H:i" }} hrs</p>
                                 <p>{{ club.clubAddress }}</p>
                             </div>
                         </div>

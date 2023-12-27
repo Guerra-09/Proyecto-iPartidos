@@ -49,9 +49,3 @@ def help(request):
 
     return render(request, 'core/help.html', {'faqs': faqs, 'form': form})
 
-
-
-
-    faqs = FrequentlyAskedQuestions.objects.all()
-
-    return render(request, 'core/help.html', {'faqs': faqs, 'form': form})
